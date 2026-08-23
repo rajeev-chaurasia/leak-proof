@@ -14,7 +14,7 @@ require "leakproof/sources"
 # sample committed here is a secret committed here.
 SKIP = %r{\A(coverage/|tmp/|Gemfile\.lock)}
 
-files = `git ls-files`.each_line(chomp: true).reject { |f| f.match?(SKIP) }
+files = `git ls-files`.each_line(chomp: true).grep_v(SKIP)
 findings = Leakproof::Scanner.new.scan(Leakproof::Sources.from_paths(files))
 reportable = findings.reject { |f| f.tier == :ignore }
 

@@ -15,7 +15,7 @@ module Leakproof
         return enum_for(:each_blob, mode: mode) unless block_given?
         raise ArgumentError, "unknown mode: #{mode}" unless MODES.include?(mode)
 
-        paths = mode == :reachable ? reachable_paths : {}
+        paths = reachable_paths
         stream(catalog(mode)) do |oid, size, content|
           yield Blob.new(oid: oid, size: size, path: paths[oid], content: content)
         end

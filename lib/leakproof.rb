@@ -33,6 +33,9 @@ require_relative "leakproof/scoring/fingerprint"
 require_relative "leakproof/report/finding"
 require_relative "leakproof/scanner"
 require_relative "leakproof/bench/synthesizer"
+require_relative "leakproof/bench/plant"
+require_relative "leakproof/bench/generator"
+require_relative "leakproof/bench/runner"
 
 module Leakproof
 end

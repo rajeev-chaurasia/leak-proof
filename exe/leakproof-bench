@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "fileutils"
+require_relative "../lib/leakproof"
+require_relative "../lib/leakproof/bench/report"
+require_relative "../lib/leakproof/bench/runner"
+
+root = File.expand_path("../tmp/corpus/recall", __dir__)
+output = File.expand_path("../bench/results", __dir__)
+FileUtils.mkdir_p(output)
+
+result = Leakproof::Bench::Runner.new.call(root)
+report = Leakproof::Bench::Report.new(result)
+
+File.write(File.join(output, "recall.json"), "#{report.to_json}\n")
+File.write(File.join(output, "summary.md"), report.to_markdown)
+
+puts report.to_markdown
+exit(result[:filtered][:false_positives].zero? ? 0 : 1)

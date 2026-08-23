@@ -65,8 +65,9 @@ module Leakproof
       end
 
       def all_object_entries
+        known = reachable_entries
         entries = {}
-        repo.each_id { |oid| entries[oid] = nil }
+        repo.each_id { |oid| entries[oid] = known[oid] }
         entries
       end
 

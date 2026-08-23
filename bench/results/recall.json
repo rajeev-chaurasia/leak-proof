@@ -1,0 +1,234 @@
+{
+  "schema": "leakproof/bench-result-v1",
+  "version": "0.1.0",
+  "seed": 20260823,
+  "planted": 22,
+  "decoys": 11,
+  "filtered": {
+    "must_find": 12,
+    "true_positives": 12,
+    "false_negatives": 0,
+    "false_positives": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "confirmed": 5,
+    "demoted": "8/8",
+    "public_types_ignored": "2/2",
+    "reported": 16,
+    "missed": [],
+    "spurious": [],
+    "by_rule": {
+      "aws-access-key-id": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "aws-secret-access-key": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "github-pat": {
+        "planted": 2,
+        "found": 2,
+        "recall": 1.0
+      },
+      "github-oauth-token": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "github-refresh-token": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "github-fine-grained-pat": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "npm-access-token": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "openai-api-key": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "slack-token": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "slack-webhook-url": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "twilio-api-key": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      }
+    }
+  },
+  "unfiltered": {
+    "must_find": 12,
+    "true_positives": 12,
+    "false_negatives": 0,
+    "false_positives": 14,
+    "precision": 0.4615,
+    "recall": 1.0,
+    "confirmed": 9,
+    "demoted": "4/8",
+    "public_types_ignored": "2/2",
+    "reported": 34,
+    "missed": [],
+    "spurious": [
+      {
+        "rule": "high-entropy-string",
+        "path": "spec/fixtures/credentials.rb",
+        "line": 5,
+        "tier": "probable"
+      },
+      {
+        "rule": "high-entropy-string",
+        "path": "spec/fixtures/credentials.rb",
+        "line": 6,
+        "tier": "probable"
+      },
+      {
+        "rule": "high-entropy-string",
+        "path": "spec/fixtures/credentials.rb",
+        "line": 7,
+        "tier": "probable"
+      },
+      {
+        "rule": "high-entropy-string",
+        "path": "spec/fixtures/credentials.rb",
+        "line": 8,
+        "tier": "probable"
+      },
+      {
+        "rule": "high-entropy-string",
+        "path": "spec/fixtures/credentials.rb",
+        "line": 9,
+        "tier": "probable"
+      },
+      {
+        "rule": "high-entropy-string",
+        "path": "spec/fixtures/credentials.rb",
+        "line": 10,
+        "tier": "probable"
+      },
+      {
+        "rule": "high-entropy-string",
+        "path": "spec/fixtures/credentials.rb",
+        "line": 11,
+        "tier": "probable"
+      },
+      {
+        "rule": "high-entropy-string",
+        "path": "spec/fixtures/credentials.rb",
+        "line": 12,
+        "tier": "probable"
+      },
+      {
+        "rule": "high-entropy-string",
+        "path": "spec/fixtures/credentials.rb",
+        "line": 13,
+        "tier": "probable"
+      },
+      {
+        "rule": "high-entropy-string",
+        "path": "spec/fixtures/credentials.rb",
+        "line": 14,
+        "tier": "probable"
+      },
+      {
+        "rule": "high-entropy-string",
+        "path": "spec/fixtures/credentials.rb",
+        "line": 15,
+        "tier": "probable"
+      },
+      {
+        "rule": "high-entropy-string",
+        "path": "spec/fixtures/credentials.rb",
+        "line": 16,
+        "tier": "probable"
+      },
+      {
+        "rule": "high-entropy-string",
+        "path": "spec/fixtures/credentials.rb",
+        "line": 17,
+        "tier": "probable"
+      },
+      {
+        "rule": "aws-access-key-id",
+        "path": "app/models/user.rb",
+        "line": 11,
+        "tier": "probable"
+      }
+    ],
+    "by_rule": {
+      "aws-access-key-id": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "aws-secret-access-key": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "github-pat": {
+        "planted": 2,
+        "found": 2,
+        "recall": 1.0
+      },
+      "github-oauth-token": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "github-refresh-token": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "github-fine-grained-pat": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "npm-access-token": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "openai-api-key": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "slack-token": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "slack-webhook-url": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      },
+      "twilio-api-key": {
+        "planted": 1,
+        "found": 1,
+        "recall": 1.0
+      }
+    }
+  }
+}

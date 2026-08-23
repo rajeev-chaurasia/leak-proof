@@ -51,6 +51,7 @@ Lint/ConstantResolution:
 RSpec/DescribeClass:
   Exclude:
     - "spec/corpus/**/*"
+    - "spec/bench/**/*"
     - "spec/property/**/*"
     - "spec/adversarial/**/*"
 
@@ -63,3 +64,9 @@ RSpec/LeakyLocalVariable:
 Style/SymbolProc:
   Exclude:
     - "lib/leakproof/detectors/providers/**/*"
+
+# The benchmark builds a corpus of repositories once and grades it. Rebuilding
+# it per example would multiply the suite's runtime for no added coverage.
+RSpec/BeforeAfterAll:
+  Exclude:
+    - "spec/bench/**/*"
