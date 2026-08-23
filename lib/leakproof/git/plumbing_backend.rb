@@ -84,7 +84,8 @@ module Leakproof
 
         IO.popen(argv("cat-file", "--batch"), "rb+") do |io|
           io.binmode
-          entries.each do |oid, _size|
+          entries.each do |entry|
+            oid = entry.first
             io.write("#{oid}\n")
             io.flush
             read_framed(io) { |type, size, body| yield oid, size, body if type == "blob" }
@@ -110,7 +111,7 @@ module Leakproof
 
       def run(*args)
         output = IO.popen(argv(*args), "rb", &:read)
-        raise CommandError, "git #{args.join(' ')} failed" unless $CHILD_STATUS.nil? || $CHILD_STATUS.success?
+        raise CommandError, "git #{args.join(" ")} failed" unless $CHILD_STATUS.nil? || $CHILD_STATUS.success?
 
         output
       end

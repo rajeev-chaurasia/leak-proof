@@ -31,15 +31,20 @@ module Leakproof
 
         entries = mode == :all_objects ? all_object_entries : reachable_entries
         entries.each do |oid, blob_path|
-          object = repo.lookup(oid)
-          next unless object.type == :blob
-          next unless include_blob?(object.size)
-
-          yield Blob.new(oid: oid, size: object.size, path: blob_path, content: object.content)
+          blob = read_blob(oid, blob_path)
+          yield blob if blob
         end
       end
 
       private
+
+      def read_blob(oid, blob_path)
+        object = repo.lookup(oid)
+        return unless object.type == :blob
+        return unless include_blob?(object.size)
+
+        Blob.new(oid: oid, size: object.size, path: blob_path, content: object.content)
+      end
 
       def repo
         @repo ||= Rugged::Repository.new(path)
@@ -65,7 +70,7 @@ module Leakproof
         entries
       end
 
-      def each_commit
+      def each_commit(&)
         walker = Rugged::Walker.new(repo)
         pushed = false
         repo.refs.each do |ref|
@@ -77,7 +82,7 @@ module Leakproof
         end
         return unless pushed
 
-        walker.each { |commit| yield commit }
+        walker.each(&)
       end
 
       def commit_oid(ref)

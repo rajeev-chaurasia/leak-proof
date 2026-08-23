@@ -2,7 +2,7 @@
 
 # The Liskov check made empirical: two independent enumerations of the same
 # repository must agree exactly, or one of them is lying.
-RSpec.describe "git backend equivalence" do
+RSpec.describe Leakproof::Git::Backend do
   let(:secret) { "AKIA6RVFFB77RE7OLMKI" }
 
   before { skip("rugged is not installed") unless Leakproof::Git::RuggedBackend.available? }
@@ -29,8 +29,8 @@ RSpec.describe "git backend equivalence" do
       end
     end
 
-    include_examples "identical enumeration", :reachable
-    include_examples "identical enumeration", :all_objects
+    it_behaves_like "identical enumeration", :reachable
+    it_behaves_like "identical enumeration", :all_objects
   end
 
   context "with binary content, nested paths and a branch" do
@@ -44,7 +44,7 @@ RSpec.describe "git backend equivalence" do
       end
     end
 
-    include_examples "identical enumeration", :reachable
-    include_examples "identical enumeration", :all_objects
+    it_behaves_like "identical enumeration", :reachable
+    it_behaves_like "identical enumeration", :all_objects
   end
 end

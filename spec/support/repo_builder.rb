@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "English"
 
 require "fileutils"
@@ -67,7 +68,7 @@ class RepoBuilder
 
   def git(*args)
     output = IO.popen(ENVIRONMENT, ["git", "-C", path, *args], "rb", &:read)
-    raise "git #{args.join(' ')} failed" unless $CHILD_STATUS.success?
+    raise "git #{args.join(" ")} failed" unless $CHILD_STATUS.success?
 
     output
   end
