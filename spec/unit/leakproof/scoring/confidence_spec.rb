@@ -24,10 +24,17 @@ RSpec.describe Leakproof::Scoring::Confidence do
       expect(finding.validity).to be_well_formed
     end
 
-    it "refuses entropy alone" do
-      finding = verdict(%(sha = "3d59a50f177d77ce013625030ba8dba906f75696"), path: "src/config.rb")
+    it "produces nothing at all for a bare hex digest" do
+      findings = scanner.scan_text(%(sha = "3d59a50f177d77ce013625030ba8dba906f75696"), path: "src/config.rb")
 
-      expect(finding.tier).to eq(:ignore)
+      expect(findings).to be_empty
+    end
+
+    it "keeps an unclassified random token below the confirmed tier" do
+      finding = verdict(%(value = "#{synth.base62(32)}"), path: "src/config.rb")
+
+      expect(finding.tier).to eq(:probable)
+      expect(finding.detector_id).to eq("high-entropy-string")
     end
 
     it "cannot be reached by any unverified detector at any specificity" do

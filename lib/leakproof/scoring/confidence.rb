@@ -18,7 +18,8 @@ module Leakproof
       # Only for name-anchored rules. Applying it to the bare entropy rule would
       # promote every git SHA in the repository to a finding.
       ENTROPY_BONUS = 15
-      ENTROPY_BONUS_AT = 0.90
+      ENTROPY_BONUS_AT = 0.92
+      ENTROPY_BONUS_MIN_LENGTH = 20
 
       CONFIRMED_AT = 90
       PROBABLE_AT = 45
@@ -47,6 +48,7 @@ module Leakproof
 
       def entropy_bonus(candidate)
         return 0 unless candidate.detector.entropy_bonus?
+        return 0 if candidate.value.length < ENTROPY_BONUS_MIN_LENGTH
         return 0 if Detectors::Entropy::Shannon.normalized(candidate.value) < ENTROPY_BONUS_AT
 
         ENTROPY_BONUS

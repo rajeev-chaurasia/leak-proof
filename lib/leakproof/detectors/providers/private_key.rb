@@ -6,6 +6,7 @@ require_relative "../../validity/pem"
 Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "private-key",
+    keywords: ["-----BEGIN"],
     name: "Private key",
     pattern: /(-----BEGIN (?:[A-Z0-9 ]+ )?PRIVATE KEY-----.*?-----END (?:[A-Z0-9 ]+ )?PRIVATE KEY-----)/m,
     capture: 1,

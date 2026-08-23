@@ -6,6 +6,7 @@ require_relative "../../validity/contract"
 Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "sendgrid-api-key",
+    keywords: %w[SG.],
     name: "SendGrid API key",
     pattern: /\b(SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43})(?![A-Za-z0-9_-])/,
     capture: 1,

@@ -23,6 +23,7 @@ Leakproof::Detectors::Providers::Github::CLASSIC.each do |id, (prefix, descripti
   Leakproof::Detectors::Registry.register(
     Leakproof::Detectors::Detector.new(
       id: id,
+      keywords: [prefix],
       name: "GitHub #{description}",
       pattern: /\b(#{prefix}[A-Za-z0-9]{36})\b/,
       capture: 1,
@@ -39,6 +40,7 @@ end
 Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "github-fine-grained-pat",
+    keywords: %w[github_pat_],
     name: "GitHub fine-grained personal access token",
     pattern: /\b(github_pat_[A-Za-z0-9_]{82})\b/,
     capture: 1,

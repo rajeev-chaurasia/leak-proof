@@ -7,6 +7,7 @@ require_relative "../../validity/contract"
 Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "aws-access-key-id",
+    keywords: %w[AKIA ASIA AIDA AROA AGPA AIPA ANPA ANVA APKA],
     name: "AWS access key ID",
     pattern: /\b((?:AKIA|ASIA|AIDA|AROA|AGPA|AIPA|ANPA|ANVA|APKA)[A-Z2-7]{16})\b/,
     capture: 1,
@@ -25,6 +26,8 @@ Leakproof::Detectors::Registry.register(
 Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "aws-secret-access-key",
+    keywords: %w[secret_key secretkey secret_access_key],
+    keywords_ignore_case: true,
     name: "AWS secret access key",
     pattern: %r{(?i:aws)?_?(?i:secret)_?(?i:access)?_?(?i:key)\s*[:=]\s*["']?([A-Za-z0-9/+=]{40})["']?},
     capture: 1,

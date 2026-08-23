@@ -6,6 +6,7 @@ require_relative "../../validity/contract"
 Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "stripe-secret-key",
+    keywords: %w[sk_live_ sk_test_ rk_live_ rk_test_],
     name: "Stripe secret key",
     pattern: /\b((?:sk|rk)_(?:live|test)_[A-Za-z0-9]{24,99})\b/,
     capture: 1,
@@ -26,6 +27,7 @@ Leakproof::Detectors::Registry.register(
 Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "stripe-publishable-key",
+    keywords: %w[pk_live_ pk_test_],
     name: "Stripe publishable key",
     pattern: /\b(pk_(?:live|test)_[A-Za-z0-9]{24,99})\b/,
     capture: 1,

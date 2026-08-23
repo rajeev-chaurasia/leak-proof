@@ -2,7 +2,9 @@
 
 require_relative "../detector"
 require_relative "candidate_extractor"
+require_relative "character_classes"
 require_relative "charsets"
+require_relative "sequence"
 require_relative "shannon"
 
 module Leakproof
@@ -12,25 +14,34 @@ module Leakproof
       # SHA scores as high here as a real credential does, which is precisely why
       # entropy alone can never promote a finding to the confirmed tier.
       class EntropyDetector < Detector
-        DEFAULT_THRESHOLD = 0.86
-        DEFAULT_MINIMUM_LENGTH = 20
+        DEFAULT_THRESHOLD = 0.92
+        DEFAULT_MINIMUM_LENGTH = 24
+        # Above this, high entropy means encoded data: a dump, a certificate, an
+        # image. Credentials do not run this long.
+        DEFAULT_MAXIMUM_LENGTH = 120
 
-        def initialize(threshold: DEFAULT_THRESHOLD, minimum_length: DEFAULT_MINIMUM_LENGTH)
+        # rubocop:disable Metrics/MethodLength -- the declaration is the interface
+        def initialize(threshold: DEFAULT_THRESHOLD, minimum_length: DEFAULT_MINIMUM_LENGTH,
+                       maximum_length: DEFAULT_MAXIMUM_LENGTH)
           @threshold = threshold
           @minimum_length = minimum_length
+          @maximum_length = maximum_length
           super(
             id: "high-entropy-string",
             name: "Unclassified high-entropy string",
             pattern: CandidateExtractor::TOKEN,
             specificity: :low,
+            entropy_bonus: true,
             notes: "No provider, no checksum, no contract. Reaches the probable tier at best.",
+            sample: ->(s) { s.base62(32) },
             examples: {
-              positive: ["api = 'kD9xQ2mVbN7pLzR4tYeW1sA6gH3jU8cF'"],
+              positive: [],
               negative: ["const message = 'hello world this is plain'", "id = '#{"a" * 32}'"],
               suppressed: ["sha = '3d59a50f177d77ce013625030ba8dba906f75696'"]
             }
           )
         end
+        # rubocop:enable Metrics/MethodLength
 
         def scan(text)
           return enum_for(:scan, text) unless block_given?
@@ -51,7 +62,15 @@ module Leakproof
 
         private
 
+        # Hex at this length is overwhelmingly digests, git object IDs and
+        # checksums. Excluding it costs recall on hex-encoded secrets, which is
+        # recorded in docs/known-misses.md rather than hidden.
         def interesting?(candidate)
+          return false if candidate.length > @maximum_length
+          return false if Charsets.classify(candidate) == :hex
+          return false if Sequence.enumerated?(candidate)
+          return false unless CharacterClasses.diverse?(candidate)
+
           score(candidate) >= @threshold
         end
       end

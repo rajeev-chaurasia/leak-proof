@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../lib/leakproof/cli"
+
+argv = ARGV.dup
+argv.shift if argv.first == "scan"
+exit Leakproof::CLI.run(argv)

@@ -61,10 +61,27 @@ module Leakproof
       )
     end
 
+    # Grouping by identical value is not enough: the entropy rule matches the
+    # random tail of a prefixed token, which is a different string at a different
+    # column. Overlapping spans on one line are one finding.
     def resolve_overlaps(candidates)
-      candidates.group_by { |c| [c.path, c.line, c.value] }
-                .values
-                .map { |group| group.min_by { |c| RANK.fetch(c.detector.specificity) } }
+      candidates.group_by { |c| [c.path, c.line] }.values.flat_map { |group| keep_widest(group) }
+    end
+
+    def keep_widest(group)
+      kept = []
+      group.sort_by { |c| [RANK.fetch(c.detector.specificity), -c.value.length] }.each do |candidate|
+        next if kept.any? { |other| overlaps?(candidate, other) }
+
+        kept << candidate
+      end
+      kept
+    end
+
+    def overlaps?(one, other)
+      one_end = one.column + one.value.length
+      other_end = other.column + other.value.length
+      one.column < other_end && other.column < one_end
     end
 
     def annotate_repetition(candidates)

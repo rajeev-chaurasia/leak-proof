@@ -6,6 +6,7 @@ require_relative "../../validity/contract"
 Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "twilio-api-key",
+    keywords: %w[SK],
     name: "Twilio API key SID",
     pattern: /\b(SK[0-9a-fA-F]{32})\b/,
     capture: 1,
@@ -29,6 +30,7 @@ Leakproof::Detectors::Registry.register(
 Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "twilio-account-sid",
+    keywords: %w[AC],
     name: "Twilio account SID",
     pattern: /\b(AC[0-9a-fA-F]{32})\b/,
     capture: 1,

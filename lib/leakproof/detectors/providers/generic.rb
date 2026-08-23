@@ -7,6 +7,8 @@ require_relative "../../validity/contract"
 Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "generic-assignment",
+    keywords: %w[password passwd secret token api_key apikey api-key auth],
+    keywords_ignore_case: true,
     name: "Credential-shaped assignment",
     pattern: /(?i:password|passwd|secret|token|api[_-]?key|auth[_-]?token)\s*[:=]\s*
               ["'`]([^"'`\s]{8,120})["'`]/x,

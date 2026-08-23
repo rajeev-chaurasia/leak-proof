@@ -6,6 +6,7 @@ require_relative "../../validity/contract"
 Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "slack-token",
+    keywords: %w[xoxb- xoxp- xoxa- xoxr- xoxs-],
     name: "Slack token",
     pattern: /\b(xox[baprs]-[A-Za-z0-9-]{10,72})(?![A-Za-z0-9_-])/,
     capture: 1,
@@ -20,6 +21,7 @@ Leakproof::Detectors::Registry.register(
 Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "slack-webhook-url",
+    keywords: %w[hooks.slack.com],
     name: "Slack incoming webhook URL",
     pattern: %r{(https://hooks\.slack\.com/services/T[A-Za-z0-9_]+/B[A-Za-z0-9_]+/[A-Za-z0-9_]{16,})},
     capture: 1,

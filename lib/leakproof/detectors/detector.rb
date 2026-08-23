@@ -14,9 +14,11 @@ module Leakproof
       attr_reader :id, :name, :pattern, :charset, :validity, :specificity, :examples, :notes
 
       # rubocop:disable Metrics/ParameterLists -- the declaration is the interface
+      # rubocop:disable Metrics/MethodLength -- the declaration is the interface
       def initialize(id:, name:, pattern:, validity: nil, charset: nil, specificity: :high,
                      secret: true, capture: 0, multiline: false, sample: nil,
-                     entropy_bonus: false, examples: {}, notes: nil)
+                     entropy_bonus: false, keywords: [], keywords_ignore_case: false,
+                     examples: {}, notes: nil)
         raise ArgumentError, "unknown specificity: #{specificity}" unless SPECIFICITIES.include?(specificity)
 
         @id = id
@@ -29,12 +31,15 @@ module Leakproof
         @multiline = multiline
         @sample = sample
         @entropy_bonus = entropy_bonus
+        @keywords = keywords.freeze
+        @keyword_matcher = build_keyword_matcher(keywords, keywords_ignore_case)
         @capture = capture
         @examples = { positive: [], negative: [], suppressed: [] }.merge(examples).freeze
         @notes = notes
         freeze
       end
       # rubocop:enable Metrics/ParameterLists
+      # rubocop:enable Metrics/MethodLength
 
       # A Stripe publishable key is published on purpose. Detecting it and then
       # calling it a leak is how a scanner earns an ignore file.
@@ -49,8 +54,17 @@ module Leakproof
         @entropy_bonus
       end
 
+      # A union of literals is far cheaper than the full rule, and on a real
+      # repository almost every blob fails it.
+      def applicable?(text)
+        return true unless @keyword_matcher
+
+        @keyword_matcher.match?(text)
+      end
+
       def scan(text, &)
         return enum_for(:scan, text) unless block_given?
+        return unless applicable?(text)
 
         if @multiline
           scan_whole(text.to_s, &)
@@ -84,6 +98,12 @@ module Leakproof
 
       private
 
+      def build_keyword_matcher(keywords, ignore_case)
+        return nil if keywords.empty?
+
+        Regexp.union(keywords).then { |u| ignore_case ? Regexp.new(u.source, Regexp::IGNORECASE) : u }
+      end
+
       def scan_line(line, number)
         line.scan(pattern) { yield build_match(line, number, Regexp.last_match) }
       end
@@ -102,7 +122,7 @@ module Leakproof
       def build_match(line, number, data)
         value = @capture.zero? ? data[0] : data[@capture]
         Match.new(detector: self, value: value, line: number,
-                  column: data.begin(0) + 1, line_text: line.chomp)
+                  column: data.begin(@capture) + 1, line_text: line.chomp)
       end
     end
   end

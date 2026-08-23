@@ -6,6 +6,7 @@ require_relative "../../validity/contract"
 Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "openai-api-key",
+    keywords: %w[sk-],
     name: "OpenAI API key",
     pattern: /\b(sk-(?:proj-)?[A-Za-z0-9_-]{20,})\b/,
     capture: 1,

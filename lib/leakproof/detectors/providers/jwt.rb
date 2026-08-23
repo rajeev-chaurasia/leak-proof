@@ -6,6 +6,7 @@ require_relative "../../validity/jwt"
 Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "json-web-token",
+    keywords: %w[eyJ],
     name: "JSON web token",
     pattern: /\b(eyJ[A-Za-z0-9_-]{6,}\.eyJ[A-Za-z0-9_-]{6,}\.[A-Za-z0-9_-]{6,})(?![A-Za-z0-9_-])/,
     capture: 1,

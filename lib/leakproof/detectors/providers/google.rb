@@ -6,6 +6,7 @@ require_relative "../../validity/contract"
 Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "google-api-key",
+    keywords: %w[AIza],
     name: "Google API key",
     pattern: /\b(AIza[0-9A-Za-z_-]{35})(?![A-Za-z0-9_-])/,
     capture: 1,

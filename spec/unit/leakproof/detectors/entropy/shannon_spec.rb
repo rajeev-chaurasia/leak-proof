@@ -19,10 +19,18 @@ RSpec.describe Leakproof::Detectors::Entropy::Shannon do
       expect(described_class.normalized(git_sha)).to be > described_class.normalized(words)
     end
 
-    it "uses the length ceiling when it binds before the alphabet ceiling" do
-      short = "abcdefgh"
+    # A short draw cannot reach the alphabet's entropy, so the ceiling collapses
+    # towards the floor and short values stop scoring as maximally random.
+    it "collapses the ceiling for a value too short to sample its alphabet" do
+      expect(described_class.ceiling("abcdefgh", charset: :base64)).to eq(described_class::MINIMUM_CEILING)
+    end
 
-      expect(described_class.ceiling(short, charset: :base64)).to eq(Math.log2(8))
+    it "keeps random tokens above the detection threshold at every length" do
+      scores = [24, 32, 64, 100].flat_map do |length|
+        (1..50).map { |seed| described_class.normalized(Leakproof::Bench::Synthesizer.new(seed: seed).base62(length)) }
+      end
+
+      expect(scores.min).to be > 0.90
     end
 
     it "scores a repeated character at zero" do
