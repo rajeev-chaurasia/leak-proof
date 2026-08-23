@@ -3,10 +3,13 @@
 RSpec.describe Leakproof::Validity::Jwt do
   subject(:strategy) { described_class.new }
 
-  it "decodes the header and payload offline" do
+  # Decoding is not proof. Nothing here checks a signature, so the strongest
+  # honest answer is that the token is well formed.
+  it "decodes the header and payload offline without claiming a proof" do
     result = strategy.check(SampleSecrets.jwt)
 
-    expect(result).to be_verified
+    expect(result).to be_well_formed
+    expect(result).not_to be_verified
     expect(result.detail[:algorithm]).to eq("HS256")
     expect(result.detail[:subject]).to eq("service-account")
   end

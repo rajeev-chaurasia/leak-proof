@@ -22,7 +22,7 @@ See [confidence.md](confidence.md) for why.
 | `github-user-to-server` | GitHub user-to-server token | CRC32 checksum | proof | credential |
 | `google-api-key` | Google API key | prefix and length only | weak | credential |
 | `high-entropy-string` | Unclassified high-entropy string | none | none | credential |
-| `json-web-token` | JSON web token | decode and expiry | proof | credential |
+| `json-web-token` | JSON web token | decodes, expiry readable | weak | credential |
 | `npm-access-token` | npm access token | CRC32 checksum | proof | credential |
 | `openai-api-key` | OpenAI API key | prefix and length only | weak | credential |
 | `private-key` | Private key | ASN.1 key parse | proof | credential |
@@ -46,7 +46,7 @@ See [confidence.md](confidence.md) for why.
 - `github-server-to-server`: Last six characters are a base62 CRC32 of the preceding thirty.
 - `github-user-to-server`: Last six characters are a base62 CRC32 of the preceding thirty.
 - `google-api-key`: Prefix and length only.
-- `high-entropy-string`: No provider, no checksum, no contract. Reaches the probable tier at best.
+- `high-entropy-string`: No provider, no checksum, no contract. Advisory only: visible with --show ignore, never reportable on its own evidence.
 - `json-web-token`: Header and payload decode offline, so expiry is settled without asking anyone.
 - `npm-access-token`: Same base62 CRC32 scheme GitHub uses.
 - `openai-api-key`: Prefix and length only. The hyphen separates this from Stripe's sk_ underscore form.

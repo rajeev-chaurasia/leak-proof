@@ -11,7 +11,7 @@ module Leakproof
     # emergency, and saying which is the entire job of the triage tier.
     class Jwt < Strategy
       def describes
-        "decode and expiry"
+        "decodes, expiry readable"
       end
 
       def check(value)
@@ -23,7 +23,7 @@ module Leakproof
         return Result.new(:malformed, reason: "segments are not base64url JSON") unless header && payload
         return Result.new(:malformed, reason: "no alg in header") unless header["alg"]
 
-        Result.new(:verified, **claims(header, payload))
+        Result.new(:well_formed, **claims(header, payload))
       end
 
       private
