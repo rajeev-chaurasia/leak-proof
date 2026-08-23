@@ -21,9 +21,14 @@ task :selfscan do
   ruby "script/check_no_samples.rb"
 end
 
+desc "Verify the generated detector table matches the registry"
+task :docs do
+  ruby "script/generate_docs.rb --check"
+end
+
 desc "Verify the layering rule: detection must not reach into git"
 task :layering do
   ruby "script/check_layering.rb"
 end
 
-task default: %i[rubocop prose links layering selfscan spec]
+task default: %i[rubocop prose links layering docs selfscan spec]

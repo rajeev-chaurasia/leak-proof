@@ -70,3 +70,11 @@ Style/SymbolProc:
 RSpec/BeforeAfterAll:
   Exclude:
     - "spec/bench/**/*"
+
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - "spec/bench/**/*"
+
+RSpec/LeakyConstantDeclaration:
+  Exclude:
+    - "spec/bench/**/*"
