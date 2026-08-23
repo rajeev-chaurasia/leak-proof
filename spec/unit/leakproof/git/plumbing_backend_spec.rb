@@ -3,7 +3,7 @@
 RSpec.describe Leakproof::Git::PlumbingBackend do
   subject(:backend) { described_class.new(repo.path) }
 
-  let(:secret) { "AKIA6RVFFB77RE7OLMKI" }
+  let(:secret) { SampleSecrets.aws_key }
 
   after { repo.destroy }
 

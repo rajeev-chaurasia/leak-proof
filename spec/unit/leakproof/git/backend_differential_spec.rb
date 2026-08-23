@@ -3,7 +3,7 @@
 # The Liskov check made empirical: two independent enumerations of the same
 # repository must agree exactly, or one of them is lying.
 RSpec.describe Leakproof::Git::Backend do
-  let(:secret) { "AKIA6RVFFB77RE7OLMKI" }
+  let(:secret) { SampleSecrets.aws_key }
 
   before { skip("rugged is not installed") unless Leakproof::Git::RuggedBackend.available? }
 

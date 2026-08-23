@@ -16,9 +16,14 @@ task :links do
   ruby "script/check_links.rb"
 end
 
+desc "Scan the tracked tree with the project's own detectors"
+task :selfscan do
+  ruby "script/check_no_samples.rb"
+end
+
 desc "Verify the layering rule: detection must not reach into git"
 task :layering do
   ruby "script/check_layering.rb"
 end
 
-task default: %i[rubocop prose links layering spec]
+task default: %i[rubocop prose links layering selfscan spec]

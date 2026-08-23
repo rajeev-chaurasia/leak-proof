@@ -5,7 +5,7 @@ SimpleCov.start do
   add_filter "/spec/"
   enable_coverage :branch
   # Mirrors the --cov-fail-under gate in .github/workflows/ci.yml so local runs agree.
-  minimum_coverage line: 85, branch: 65
+  minimum_coverage line: 90, branch: 75
 end
 
 require "leakproof"

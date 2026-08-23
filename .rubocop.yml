@@ -45,3 +45,19 @@ RSpec/NestedGroups:
 # a lint failure rather than a code review opinion.
 Lint/ConstantResolution:
   Enabled: false
+
+# The corpus tier is a table-driven specification of the whole registry, so it
+# iterates detectors at definition time rather than describing one class.
+RSpec/DescribeClass:
+  Exclude:
+    - "spec/corpus/**/*"
+
+RSpec/LeakyLocalVariable:
+  Exclude:
+    - "spec/corpus/**/*"
+
+# Every sample: declaration reads as a lambda over the synthesizer. Collapsing
+# the three single-call ones to &: would make the set inconsistent.
+Style/SymbolProc:
+  Exclude:
+    - "lib/leakproof/detectors/providers/**/*"
