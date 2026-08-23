@@ -12,9 +12,9 @@
     "precision": 1.0,
     "recall": 1.0,
     "confirmed": 5,
+    "reported": 16,
     "demoted": "8/8",
     "public_types_ignored": "2/2",
-    "reported": 16,
     "missed": [],
     "spurious": [],
     "by_rule": {
@@ -83,9 +83,9 @@
     "precision": 0.4615,
     "recall": 1.0,
     "confirmed": 9,
+    "reported": 34,
     "demoted": "4/8",
     "public_types_ignored": "2/2",
-    "reported": 34,
     "missed": [],
     "spurious": [
       {
