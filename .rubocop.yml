@@ -41,10 +41,8 @@ RSpec/MultipleExpectations:
 RSpec/NestedGroups:
   Max: 4
 
-# ADR 0001: the detection engine must never reach into git. A violation here is
-# a lint failure rather than a code review opinion.
-Lint/ConstantResolution:
-  Enabled: false
+# The layering rule (detection must not reach into git) is enforced by
+# script/check_layering.rb in CI, not by a cop.
 
 # The corpus tier is a table-driven specification of the whole registry, so it
 # iterates detectors at definition time rather than describing one class.

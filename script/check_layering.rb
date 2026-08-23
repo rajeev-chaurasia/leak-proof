@@ -1,23 +1,38 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# ADR 0001. The detection engine must stay testable with no repository on disk,
-# so it may not name the git layer at all.
-FORBIDDEN = %w[detectors validity filter scoring].freeze
+# The detection engine must stay testable with no repository on disk, so it may
+# not reach the git layer by any spelling.
+#
+# An earlier version grepped for "Leakproof::Git" only. That missed a bare
+# `Git::Blob` resolved lexically inside `module Leakproof`, a `require_relative
+# "../git/..."`, a `const_get(:Git)`, and shelling out to git directly.
+FORBIDDEN_LAYERS = %w[detectors validity filter scoring report].freeze
+
+PATTERNS = {
+  /\bLeakproof::Git\b/ => "names the git layer",
+  /\bGit::[A-Z]/ => "resolves a git constant lexically",
+  %r{require(_relative)?\s+["'][^"']*\bgit/} => "requires from the git layer",
+  /const_get\(\s*:Git\b/ => "reaches the git layer reflectively",
+  /(IO\.popen|Open3|%x\(|`)\s*\(?\s*\[?\s*["']?git\b/ => "shells out to git"
+}.freeze
+
 failures = []
 
-FORBIDDEN.each do |layer|
+FORBIDDEN_LAYERS.each do |layer|
   Dir.glob("lib/leakproof/#{layer}/**/*.rb").each do |file|
     File.readlines(file).each_with_index do |line, index|
-      next unless line.match?(%r{Leakproof::Git|require.*leakproof/git})
+      next if line.lstrip.start_with?("#")
 
-      failures << "#{file}:#{index + 1}: #{layer}/ must not reach into the git layer"
+      PATTERNS.each do |pattern, reason|
+        failures << "#{file}:#{index + 1}: #{layer}/ #{reason}" if line.match?(pattern)
+      end
     end
   end
 end
 
 if failures.empty?
-  puts "layering ok"
+  puts "layering ok (#{FORBIDDEN_LAYERS.length} layers, #{PATTERNS.length} patterns)"
   exit 0
 end
 

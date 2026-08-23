@@ -27,12 +27,18 @@ module Leakproof
                    show: "probable", fail_on: "confirmed", staged: false }
     end
 
+    class Done < StandardError
+    end
+
     def run(argv)
       paths = parser.parse(argv.dup)
       findings = scan(paths.first || ".")
       render(visible(findings))
       exit_code(findings)
-    rescue OptionParser::ParseError, ConfigError, RepositoryError => e
+    rescue Done => e
+      @io.puts e.message
+      EXIT_OK
+    rescue OptionParser::ParseError, ConfigError, RepositoryError, Git::PlumbingBackend::CommandError => e
       @err.puts "leakproof: #{e.message}"
       EXIT_USAGE
     end
@@ -40,12 +46,20 @@ module Leakproof
     private
 
     def scan(path)
+      ensure_repository(path)
       sources = if @options[:staged]
                   Sources.from_staged(path)
                 else
                   Sources.from_repository(path, mode: @options[:mode], backend: @options[:backend])
                 end
       Scanner.new.scan(sources)
+    end
+
+    def ensure_repository(path)
+      return if @options[:staged]
+      return if Git::PlumbingBackend.new(path).repository?
+
+      raise RepositoryError, "#{path} is not a git repository"
     end
 
     def visible(findings)
@@ -83,8 +97,8 @@ module Leakproof
         end
         o.on("--show TIER", TIERS, "Lowest tier to report (#{TIERS.join(", ")})") { |v| @options[:show] = v }
         o.on("--fail-on TIER", TIERS + ["never"], "Tier that fails the run") { |v| @options[:fail_on] = v }
-        o.on("--version") { @io.puts(Leakproof::VERSION) && exit(EXIT_OK) }
-        o.on("-h", "--help") { @io.puts(o) && exit(EXIT_OK) }
+        o.on("--version") { raise Done, Leakproof::VERSION }
+        o.on("-h", "--help") { raise Done, o.to_s }
       end
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength

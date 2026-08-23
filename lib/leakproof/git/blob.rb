@@ -17,7 +17,7 @@ module Leakproof
       end
 
       # Not memoized, because the object is frozen and this is off the hot path:
-      # only findings and the differential spec ask for it.
+      # only #identity asks for it, which the differential spec compares.
       def content_sha
         Digest::SHA256.hexdigest(content.to_s)
       end

@@ -22,10 +22,9 @@ module Leakproof
       end
 
       def repository?
-        run("rev-parse", "--git-dir")
-        true
-      rescue CommandError
-        false
+        # git writes its own diagnosis to stderr; the caller wants a boolean.
+        IO.popen(argv("rev-parse", "--git-dir"), "rb", err: File::NULL, &:read)
+        $CHILD_STATUS.success?
       end
 
       private
