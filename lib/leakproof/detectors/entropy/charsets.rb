@@ -3,9 +3,12 @@
 module Leakproof
   module Detectors
     module Entropy
-      # One source of truth for alphabets. Entropy scoring and the validity
-      # contracts both read from here, because a detector that accepts a
-      # character its entropy model has never heard of is the classic silent bug.
+      # Membership sets for entropy scoring and the validity contracts, so a
+      # detector cannot accept a character its entropy model has never heard of.
+      #
+      # Deliberately not shared with Validity::Base62 or Validity::AwsAccount:
+      # there the order of the alphabet is load-bearing (positional digit value
+      # for CRC32, RFC 4648 index for base32), and here it is incidental.
       module Charsets
         HEX = "0123456789abcdefABCDEF"
         BASE32 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"

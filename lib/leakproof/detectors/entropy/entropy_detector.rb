@@ -31,8 +31,9 @@ module Leakproof
             name: "Unclassified high-entropy string",
             pattern: CandidateExtractor::TOKEN,
             specificity: :low,
-            entropy_bonus: true,
-            notes: "No provider, no checksum, no contract. Reaches the probable tier at best.",
+            advisory: true,
+            notes: "No provider, no checksum, no contract. Advisory only: visible " \
+                   "with --show ignore, never reportable on its own evidence.",
             sample: ->(s) { s.base62(32) },
             examples: {
               positive: [],

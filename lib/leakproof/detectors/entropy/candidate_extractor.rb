@@ -23,9 +23,21 @@ module Leakproof
         module_function
 
         def call(line, minimum: 20)
-          candidates = line.scan(TOKEN)
+          candidates = line.scan(TOKEN).flat_map { |token| split_assignment(token) }
           candidates.concat(line.scan(QUOTED).flatten.grep(WHOLE_TOKEN))
           candidates.uniq.select { |c| c.length >= minimum && PADDING_ONLY.match?(c) }
+        end
+
+        # KEY=VALUE lexes as a single token, because base64 padding is also an
+        # equals sign. Take the right-hand side so an unquoted .env line is
+        # visible, and only for a genuine name on the left: splitting on every
+        # equals sign multiplied candidates across a whole repository.
+        ASSIGNMENT = /\A[A-Za-z_][A-Za-z0-9_.-]*=[^=]/
+
+        def split_assignment(token)
+          return [token] unless ASSIGNMENT.match?(token)
+
+          [token.split("=", 2).last]
         end
       end
     end

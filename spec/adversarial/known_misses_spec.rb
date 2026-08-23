@@ -90,8 +90,11 @@ RSpec.describe "documented gaps" do
       expect(result).to eq([:confirmed])
     end
 
-    it "finds a base64-wrapped credential through the entropy rule" do
-      expect(tiers(%(T = "#{[token].pack("m0")}"))).to eq([:probable])
+    it "surfaces a base64-wrapped credential only when a name corroborates it" do
+      wrapped = [token].pack("m0")
+
+      expect(tiers(%(x = "#{wrapped}"))).to be_empty
+      expect(tiers(%(api_key = "#{wrapped}"))).to eq([:probable])
     end
   end
 end

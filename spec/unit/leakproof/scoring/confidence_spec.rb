@@ -4,6 +4,18 @@ RSpec.describe Leakproof::Scoring::Confidence do
   let(:scanner) { Leakproof::Scanner.new }
   let(:synth) { Leakproof::Bench::Synthesizer.new }
 
+  # A candidate whose value is deliberately drawn, so the entropy bonus applies
+  # wherever a rule is eligible for it.
+  def candidate_for(detector, status)
+    value = synth.base62(40)
+    match = Leakproof::Detectors::Match.new(
+      detector: detector, value: value, line: 1, column: 1, line_text: value
+    )
+    Leakproof::Scoring::Candidate.new(
+      match: match, validity: Leakproof::Validity::Result.new(status), path: "src/config.rb"
+    )
+  end
+
   def verdict(content, path:)
     scanner.scan_text(content, path: path).first
   end
@@ -30,21 +42,43 @@ RSpec.describe Leakproof::Scoring::Confidence do
       expect(findings).to be_empty
     end
 
-    it "keeps an unclassified random token below the confirmed tier" do
+    # Randomness on its own is not evidence of a credential. The base score for
+    # a low-specificity rule plus the entropy bonus used to land exactly on
+    # PROBABLE_AT, which surfaced every base64 blob in a repository.
+    it "leaves an uncorroborated random token below the probable tier" do
       finding = verdict(%(value = "#{synth.base62(32)}"), path: "src/config.rb")
 
-      expect(finding.tier).to eq(:probable)
+      expect(finding.tier).to eq(:ignore)
       expect(finding.detector_id).to eq("high-entropy-string")
     end
 
-    it "cannot be reached by any unverified detector at any specificity" do
-      unverifiable = Leakproof::Detectors::Registry.default.reject do |d|
-        %w[verified].include?(d.validity.check("").status.to_s)
-      end
-      best = unverifiable.map { |d| described_class::BASE.fetch(d.specificity) }.max
+    it "reports the same token once a credential-shaped name corroborates it" do
+      expect(verdict(%(api_key = "#{synth.base62(32)}"), path: "src/config.rb").tier).to eq(:probable)
+    end
 
-      expect(best + described_class::VALIDITY[:well_formed] + described_class::ENTROPY_BONUS)
-        .to be < described_class::CONFIRMED_AT
+    # A JWT decodes; that proves it is a JWT, not that it is live or secret.
+    it "never confirms a JSON web token" do
+      expect(verdict(%(t = "#{synth.jwt}"), path: "src/config.rb").tier).to eq(:probable)
+    end
+
+    # Driven through the real scorer, for every registered rule, at every
+    # non-verified validity status. The previous version recomputed the constants
+    # and never called Confidence.call, so doubling the entropy bonus passed.
+    it "cannot be reached by any rule without a proof, at any validity short of verified" do
+      reached = Leakproof::Detectors::Registry.default.flat_map do |detector|
+        %i[unknown well_formed malformed].map do |status|
+          verdict = described_class.call(candidate_for(detector, status), [])
+          "#{detector.id}/#{status}" if verdict.tier == :confirmed
+        end
+      end.compact
+
+      expect(reached).to be_empty
+    end
+
+    it "does reach the confirmed tier once a proof is present" do
+      detector = Leakproof::Detectors::Registry.default["github-pat"]
+
+      expect(described_class.call(candidate_for(detector, :verified), []).tier).to eq(:confirmed)
     end
   end
 
