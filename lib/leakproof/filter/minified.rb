@@ -11,6 +11,10 @@ module Leakproof
       LONG_LINE = 500
       PENALTY = 30
 
+      def noise_proxy?
+        true
+      end
+
       def suppression_for(candidate)
         return suppression("minified asset path", PENALTY) if minified_path?(candidate.path.to_s)
         return suppression("line longer than #{LONG_LINE} characters", PENALTY) if long_line?(candidate)

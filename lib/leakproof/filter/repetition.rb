@@ -15,6 +15,10 @@ module Leakproof
         @threshold = threshold
       end
 
+      def noise_proxy?
+        true
+      end
+
       def suppression_for(candidate)
         count = candidate.distinct_paths
         return nil if count < @threshold

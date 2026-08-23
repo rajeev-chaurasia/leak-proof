@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "ciphertext_by_design"
 require_relative "documented_dummy"
 require_relative "identifier_shape"
 require_relative "minified"
@@ -10,7 +11,8 @@ require_relative "repetition"
 module Leakproof
   module Filter
     class Chain
-      DEFAULT = [Placeholders, IdentifierShape, DocumentedDummy, PathRules, Minified, Repetition].freeze
+      DEFAULT = [Placeholders, IdentifierShape, DocumentedDummy, CiphertextByDesign,
+                 PathRules, Minified, Repetition].freeze
 
       def self.default
         new(DEFAULT.map(&:new))
@@ -21,10 +23,18 @@ module Leakproof
       end
 
       def call(candidate)
-        @suppressors.filter_map { |s| s.suppression_for(candidate) }
+        applicable(candidate).filter_map { |suppressor| suppressor.suppression_for(candidate) }
       end
 
       def rules = @suppressors.map(&:rule)
+
+      private
+
+      def applicable(candidate)
+        return @suppressors unless candidate.validity.verified?
+
+        @suppressors.reject(&:noise_proxy?)
+      end
     end
   end
 end

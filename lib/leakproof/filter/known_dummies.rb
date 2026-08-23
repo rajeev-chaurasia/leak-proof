@@ -36,7 +36,16 @@ module Leakproof
           "stripe-docs-key-body",
         # Google documentation example API key
         "1021ad463a161d69de63ef74566407b9ed012deb6d9306a4bc7183544c84350c" =>
-          "google-docs-api-key"
+          "google-docs-api-key",
+        # Azurite published development account key
+        "0011cc25eb4320717494d2703e8cba85743e71b500283c21c8b88147992f9059" =>
+          "azurite-dev-account-key",
+        # Azurite published development account name
+        "4b2dd836d664f91a377630253bf8017041701dab7e2f468522dcc96d015e9e2e" =>
+          "azurite-dev-account-name",
+        # jwt.io canonical demo signature
+        "051d093c4bdedbf23f905ad01d9c6111414d54e2170e1d7f76657c4e76e3e65b" =>
+          "jwt-io-demo-signature"
       }.freeze
 
       module_function

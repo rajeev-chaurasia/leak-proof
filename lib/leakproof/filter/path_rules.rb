@@ -12,7 +12,11 @@ module Leakproof
         %r{(\A|/)fixtures?/} => "fixture directory",
         %r{(\A|/)(examples?|samples?|demos?)/} => "example directory",
         %r{(\A|/)(docs?|documentation)/} => "documentation",
+        %r{(\A|/)(README|CHANGELOG|HISTORY|CONTRIBUTING|SECURITY|UPGRADING)[^/]*\.(md|rdoc|txt|html)\z}i =>
+          "documentation",
         %r{(\A|/)(vendor|node_modules|third_party|\.bundle)/} => "vendored dependency",
+        %r{(\A|/)(dist|build|out|target|coverage|\.next|_site|pkg)/} => "build output",
+        %r{(\A|/)(index|file\.[A-Za-z0-9_]+)\.html\z} => "generated documentation",
         /\.(example|sample|template|dist)(\.[a-z]+)?\z/ => "template file",
         /\.(lock|sum)\z/ => "lock file",
         %r{(\A|/)(package-lock\.json|yarn\.lock|pnpm-lock\.yaml|Gemfile\.lock)\z} => "lock file"
