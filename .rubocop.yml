@@ -51,6 +51,8 @@ Lint/ConstantResolution:
 RSpec/DescribeClass:
   Exclude:
     - "spec/corpus/**/*"
+    - "spec/property/**/*"
+    - "spec/adversarial/**/*"
 
 RSpec/LeakyLocalVariable:
   Exclude:
