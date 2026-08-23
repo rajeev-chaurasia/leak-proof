@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "set"
-
 require_relative "leakproof/version"
 require_relative "leakproof/errors"
 require_relative "leakproof/git/backend"
