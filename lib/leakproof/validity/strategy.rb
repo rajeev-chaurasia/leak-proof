@@ -11,7 +11,7 @@ module Leakproof
         Result.new(:unknown)
       end
 
-      # What the generated README table prints in the "offline check" column.
+      # What docs/detectors.md prints in the "offline check" column.
       def describes
         "none"
       end
