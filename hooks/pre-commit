@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# leakproof pre-commit hook.
+#
+# Scans staged content only, and blocks on the confirmed tier alone. A hook that
+# blocks on guesses gets uninstalled, which protects nothing.
+set -euo pipefail
+
+if ! command -v leakproof >/dev/null 2>&1; then
+  root="$(git rev-parse --show-toplevel)"
+  if [ -x "$root/exe/leakproof" ]; then
+    LEAKPROOF="$root/exe/leakproof"
+  else
+    echo "leakproof: not installed, skipping" >&2
+    exit 0
+  fi
+else
+  LEAKPROOF="$(command -v leakproof)"
+fi
+
+"$LEAKPROOF" scan --staged --show confirmed --fail-on confirmed || {
+  cat >&2 <<'MESSAGE'
+
+leakproof blocked this commit.
+
+Every finding above carries a checksum or a key parse, so none of them is a
+guess. Remove the credential and rotate it: a secret that reached a commit
+should be treated as disclosed even if the commit never leaves this machine.
+
+To commit anyway:
+  git commit --no-verify
+MESSAGE
+  exit 1
+}

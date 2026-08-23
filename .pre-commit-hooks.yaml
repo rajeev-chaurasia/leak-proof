@@ -1,0 +1,7 @@
+- id: leakproof
+  name: leakproof
+  description: Block credentials that carry an offline proof, on staged content only.
+  entry: leakproof scan --staged --show confirmed --fail-on confirmed
+  language: ruby
+  pass_filenames: false
+  stages: [pre-commit]
