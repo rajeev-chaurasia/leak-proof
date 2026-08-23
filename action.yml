@@ -1,0 +1,57 @@
+name: leakproof
+description: Find credentials in git history and verify the findings offline, without calling any provider.
+branding:
+  icon: shield
+  color: purple
+
+inputs:
+  path:
+    description: Repository to scan.
+    default: "."
+  mode:
+    description: >-
+      "reachable" walks everything any ref points at. "all-objects" also reads
+      objects no ref points at, which is where an amended-away commit hides.
+    default: reachable
+  show:
+    description: Lowest tier to report (confirmed, probable, ignore).
+    default: probable
+  fail-on:
+    description: Tier that fails the run (confirmed, probable, ignore, never).
+    default: confirmed
+  sarif-file:
+    description: Where to write the SARIF report.
+    default: leakproof.sarif
+
+outputs:
+  sarif-file:
+    description: Path of the SARIF report that was written.
+    value: ${{ inputs.sarif-file }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
+      with:
+        ruby-version: "3.4"
+        bundler-cache: false
+
+    - name: Install leakproof
+      shell: bash
+      run: gem install --no-document leakproof
+
+    - name: Scan
+      id: scan
+      shell: bash
+      run: |
+        set -o pipefail
+        mode_flag=""
+        if [ "${{ inputs.mode }}" = "all-objects" ]; then
+          mode_flag="--all-objects"
+        fi
+        leakproof scan "${{ inputs.path }}" $mode_flag \
+          --format sarif --show "${{ inputs.show }}" --fail-on never \
+          > "${{ inputs.sarif-file }}"
+        leakproof scan "${{ inputs.path }}" $mode_flag \
+          --show "${{ inputs.show }}" --fail-on "${{ inputs.fail-on }}"
