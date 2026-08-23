@@ -49,7 +49,8 @@ module Leakproof
       #   must demote  the same credential under a fixture or documentation path.
       #                Reporting it is right; blocking a commit over it is not,
       #                so the test is that it does not reach the confirmed tier.
-      #   must ignore  a type that is public by design, such as a Stripe pk_ key
+      #   must ignore  a type that is public by design, such as a Stripe pk_ key,
+      #                or an advisory rule that cannot surface on its own evidence
       # rubocop:disable Metrics/AbcSize -- flat result assembly, no branching
       def grade(findings, generator)
         reported = findings.select { |f| REPORTABLE.include?(f.tier) }
@@ -118,7 +119,7 @@ module Leakproof
 
       def secret?(plant)
         detector = @registry.find { |d| d.id == plant.rule }
-        detector.nil? || detector.secret?
+        detector.nil? || (detector.secret? && !detector.advisory?)
       end
 
       # A plant and a finding correspond when the rule and the file agree. Line

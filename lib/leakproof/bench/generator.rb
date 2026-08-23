@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "digest"
 require "fileutils"
 require_relative "plant"
 require_relative "synthesizer"
@@ -12,7 +13,7 @@ module Leakproof
     # Nothing it writes is committed. A structurally valid token in a public
     # repository is a secret in a public repository, and GitHub's push
     # protection refuses it, correctly. The repository carries the recipe.
-    class Generator
+    class Generator # rubocop:disable Metrics/ClassLength
       PLACEMENTS = {
         "src/config/settings.rb" => :source,
         "app/services/client.rb" => :source,
@@ -71,16 +72,22 @@ module Leakproof
       end
 
       def write_plants(root)
-        placements = PLACEMENTS.to_a
-        @registry.each_with_index do |detector, index|
+        @registry.each do |detector|
           value = detector.synthesize(@synthesizer)
           next unless value
 
-          path, placement = placements[index % placements.length]
+          path, placement = placement_for(detector.id)
           @plants << Plant.new(rule: detector.id, path: path, value: value,
                                line: nil, placement: placement)
         end
         PLACEMENTS.each_key { |path| write(root, path, content_for(path)) }
+      end
+
+      # Keyed on the rule id rather than its position, so registering a new
+      # detector cannot move an existing one into a different population.
+      def placement_for(rule_id)
+        placements = PLACEMENTS.to_a
+        placements[Digest::SHA256.hexdigest(rule_id)[0, 8].to_i(16) % placements.length]
       end
 
       def content_for(path)

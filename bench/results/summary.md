@@ -9,45 +9,44 @@ Corpus: 22 planted credentials, 11 decoys, seed 20260823.
 
 | | reported | not reported |
 |---|---|---|
-| credential present in source | 12 | 0 |
+| credential present in source | 9 | 0 |
 | no credential present | 0 | n/a |
 
 Precision 100.0%, recall 100.0% over
-12 credentials planted in source or removed from it.
-5 reached the confirmed tier.
+9 credentials planted in source or removed from it.
+3 reached the confirmed tier.
 
 Two populations are graded apart from the matrix, because reporting them
 would be the error:
 
 - credentials under a fixture or documentation path, correctly demoted:
-  8/8
-- types that are public by design, correctly ignored:
-  2/2
+  10/10
+- types that are public by design, and advisory rules that must not
+  surface on their own evidence, correctly ignored:
+  3/3
 
 
 ## What the context filter removes
 
 | | findings reported | false positives |
 |---|---|---|
-| without the filter | 34 | 14 |
-| with the filter | 16 | 0 |
+| without the filter | 20 | 1 |
+| with the filter | 14 | 0 |
 
 
 ## Recall by rule
 
 | rule | planted | found | recall |
 |---|---|---|---|
-| `aws-access-key-id` | 1 | 1 | 100.0% |
 | `aws-secret-access-key` | 1 | 1 | 100.0% |
 | `github-fine-grained-pat` | 1 | 1 | 100.0% |
-| `github-oauth-token` | 1 | 1 | 100.0% |
-| `github-pat` | 2 | 2 | 100.0% |
-| `github-refresh-token` | 1 | 1 | 100.0% |
-| `npm-access-token` | 1 | 1 | 100.0% |
+| `github-pat` | 1 | 1 | 100.0% |
+| `github-server-to-server` | 1 | 1 | 100.0% |
+| `json-web-token` | 1 | 1 | 100.0% |
 | `openai-api-key` | 1 | 1 | 100.0% |
+| `private-key` | 1 | 1 | 100.0% |
+| `sendgrid-api-key` | 1 | 1 | 100.0% |
 | `slack-token` | 1 | 1 | 100.0% |
-| `slack-webhook-url` | 1 | 1 | 100.0% |
-| `twilio-api-key` | 1 | 1 | 100.0% |
 
 
 ## What it missed
