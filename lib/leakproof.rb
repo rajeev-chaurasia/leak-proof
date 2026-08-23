@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "set"
+
 require_relative "leakproof/version"
 require_relative "leakproof/errors"
 require_relative "leakproof/git/backend"
@@ -21,6 +23,12 @@ require_relative "leakproof/detectors/entropy/candidate_extractor"
 require_relative "leakproof/detectors/entropy/entropy_detector"
 require_relative "leakproof/detectors/registry"
 require_relative "leakproof/filter/known_dummies"
+require_relative "leakproof/filter/chain"
+require_relative "leakproof/scoring/candidate"
+require_relative "leakproof/scoring/confidence"
+require_relative "leakproof/scoring/fingerprint"
+require_relative "leakproof/report/finding"
+require_relative "leakproof/scanner"
 require_relative "leakproof/bench/synthesizer"
 
 module Leakproof

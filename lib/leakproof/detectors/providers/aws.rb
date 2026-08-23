@@ -31,6 +31,7 @@ Leakproof::Detectors::Registry.register(
     charset: :base64,
     validity: Leakproof::Validity::Contract.new(length: 40, charset: :base64),
     specificity: :medium,
+    entropy_bonus: true,
     sample: ->(s) { "aws_secret_access_key = #{s.base62(40)}" },
     notes: "No checksum and no structure. Only the assignment context distinguishes it.",
     examples: {

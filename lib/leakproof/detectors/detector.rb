@@ -15,7 +15,8 @@ module Leakproof
 
       # rubocop:disable Metrics/ParameterLists -- the declaration is the interface
       def initialize(id:, name:, pattern:, validity: nil, charset: nil, specificity: :high,
-                     secret: true, capture: 0, multiline: false, sample: nil, examples: {}, notes: nil)
+                     secret: true, capture: 0, multiline: false, sample: nil,
+                     entropy_bonus: false, examples: {}, notes: nil)
         raise ArgumentError, "unknown specificity: #{specificity}" unless SPECIFICITIES.include?(specificity)
 
         @id = id
@@ -27,6 +28,7 @@ module Leakproof
         @secret = secret
         @multiline = multiline
         @sample = sample
+        @entropy_bonus = entropy_bonus
         @capture = capture
         @examples = { positive: [], negative: [], suppressed: [] }.merge(examples).freeze
         @notes = notes
@@ -38,6 +40,13 @@ module Leakproof
       # calling it a leak is how a scanner earns an ignore file.
       def secret?
         @secret
+      end
+
+      # True for rules anchored on a variable name rather than a value shape.
+      # A random-looking value assigned to something called "password" is
+      # evidence; the same value alone on a line is not.
+      def entropy_bonus?
+        @entropy_bonus
       end
 
       def scan(text, &)

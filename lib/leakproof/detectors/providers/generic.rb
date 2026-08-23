@@ -12,6 +12,7 @@ Leakproof::Detectors::Registry.register(
               ["'`]([^"'`\s]{8,120})["'`]/x,
     capture: 1,
     specificity: :low,
+    entropy_bonus: true,
     notes: "Named by its variable rather than its shape. Noisy by construction.",
     examples: {
       positive: ['password = "hunter2correcthorse"'],

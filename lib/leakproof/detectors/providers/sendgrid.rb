@@ -7,7 +7,7 @@ Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "sendgrid-api-key",
     name: "SendGrid API key",
-    pattern: /\b(SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43})\b/,
+    pattern: /\b(SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43})(?![A-Za-z0-9_-])/,
     capture: 1,
     validity: Leakproof::Validity::Contract.new(prefix: "SG.", length: 69),
     specificity: :high,

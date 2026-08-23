@@ -7,7 +7,7 @@ Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "google-api-key",
     name: "Google API key",
-    pattern: /\b(AIza[0-9A-Za-z_-]{35})\b/,
+    pattern: /\b(AIza[0-9A-Za-z_-]{35})(?![A-Za-z0-9_-])/,
     capture: 1,
     charset: :base64url,
     validity: Leakproof::Validity::Contract.new(prefix: "AIza", length: 39),

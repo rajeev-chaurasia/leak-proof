@@ -7,7 +7,7 @@ Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "json-web-token",
     name: "JSON web token",
-    pattern: /\b(eyJ[A-Za-z0-9_-]{6,}\.eyJ[A-Za-z0-9_-]{6,}\.[A-Za-z0-9_-]{6,})\b/,
+    pattern: /\b(eyJ[A-Za-z0-9_-]{6,}\.eyJ[A-Za-z0-9_-]{6,}\.[A-Za-z0-9_-]{6,})(?![A-Za-z0-9_-])/,
     capture: 1,
     charset: :base64url,
     validity: Leakproof::Validity::Jwt.new,

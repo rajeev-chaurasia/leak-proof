@@ -7,7 +7,7 @@ Leakproof::Detectors::Registry.register(
   Leakproof::Detectors::Detector.new(
     id: "slack-token",
     name: "Slack token",
-    pattern: /\b(xox[baprs]-[A-Za-z0-9-]{10,72})\b/,
+    pattern: /\b(xox[baprs]-[A-Za-z0-9-]{10,72})(?![A-Za-z0-9_-])/,
     capture: 1,
     validity: Leakproof::Validity::Contract.new(length: 15..90),
     specificity: :high,
