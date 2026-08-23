@@ -39,7 +39,7 @@ module Leakproof
 
       def scan(sources, filtered:)
         filter = filtered ? Filter::Chain.default : Filter::Chain.new([])
-        Scanner.new(registry: @registry, filter: filter).scan(sources)
+        Scanner.new(registry: @registry, filter: filter, include_advisory: true).scan(sources)
       end
 
       # Three populations, graded separately, because collapsing them would let

@@ -46,10 +46,16 @@ RSpec.describe Leakproof::Scoring::Confidence do
     # a low-specificity rule plus the entropy bonus used to land exactly on
     # PROBABLE_AT, which surfaced every base64 blob in a repository.
     it "leaves an uncorroborated random token below the probable tier" do
-      finding = verdict(%(value = "#{synth.base62(32)}"), path: "src/config.rb")
+      advisory = Leakproof::Scanner.new(include_advisory: true)
+      finding = advisory.scan_text(%(value = "#{synth.base62(32)}"), path: "src/config.rb").first
 
       expect(finding.tier).to eq(:ignore)
       expect(finding.detector_id).to eq("high-entropy-string")
+    end
+
+    # And it is not even computed unless something asks to see the ignore tier.
+    it "does not run an advisory rule by default" do
+      expect(scanner.scan_text(%(value = "#{synth.base62(32)}"), path: "src/config.rb")).to be_empty
     end
 
     it "reports the same token once a credential-shaped name corroborates it" do

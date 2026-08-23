@@ -20,9 +20,10 @@ module Leakproof
       def binary? = content.to_s.byteslice(0, 8000).to_s.include?("\x00")
     end
 
-    def initialize(registry: nil, filter: nil)
+    def initialize(registry: nil, filter: nil, include_advisory: false)
       @registry = registry || Detectors::Registry.default
       @filter = filter || Filter::Chain.default
+      @include_advisory = include_advisory
     end
 
     # Two passes on purpose. Whether a value is repeated across the tree is only
@@ -45,13 +46,21 @@ module Leakproof
         next if source.binary?
 
         text = source.text
-        @registry.each do |detector|
+        rules.each do |detector|
           detector.scan(text) do |match|
             candidates << build_candidate(match, detector, source)
           end
         end
       end
       candidates
+    end
+
+    # An advisory rule cannot reach a reportable tier on its own evidence, so
+    # running it costs the whole pipeline per match and can change nothing. On a
+    # 168 MB repository the entropy rule alone produced 510,706 candidates and
+    # 35 of the 40 seconds. It runs when --show ignore asks for it.
+    def rules
+      @rules ||= @include_advisory ? @registry.to_a : @registry.reject(&:advisory?)
     end
 
     def build_candidate(match, detector, source)

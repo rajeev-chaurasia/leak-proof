@@ -52,7 +52,7 @@ module Leakproof
                 else
                   Sources.from_repository(path, mode: @options[:mode], backend: @options[:backend])
                 end
-      Scanner.new.scan(sources)
+      Scanner.new(include_advisory: @options[:show] == "ignore").scan(sources)
     end
 
     def ensure_repository(path)
