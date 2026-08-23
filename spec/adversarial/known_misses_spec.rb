@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "json"
 require "tmpdir"
 
 # docs/known-misses.md, executed.
@@ -42,6 +43,39 @@ RSpec.describe "documented gaps" do
     it "misses a secret drawn from a single character class" do
       expect(tiers(%(value = "#{synth.base32(32)}"))).to be_empty
     end
+
+    # Identifiers flip character class once per word; draws flip every other
+    # character. The bound costs about one percent of tokens at 24 characters.
+    it "misses a drawn token whose cadence happens to read as an identifier" do
+      lost = (1..600).count do |seed|
+        value = Leakproof::Bench::Synthesizer.new(seed: seed).base62(24)
+        tiers(%(api_key = "#{value}")).empty?
+      end
+
+      expect(lost).to be_positive
+      expect(lost).to be < 30
+    end
+  end
+
+  describe "not reported, on purpose" do
+    it "never confirms a JSON web token, because decoding is not a proof" do
+      expect(tiers(%(t = "#{synth.jwt}"))).to eq([:probable])
+    end
+
+    it "ignores a JSON web token in documentation" do
+      expect(tiers(%(t = "#{synth.jwt}"), path: "README.md")).to be_empty
+    end
+
+    it "misses a credential in a commit message, because only blobs are read" do
+      result = Dir.mktmpdir("leakproof-gap") do |dir|
+        repo = RepoBuilder.new(dir)
+        repo.init
+        repo.commit(%(Bump deploy token to #{token}), "README.md" => "hello\n")
+        scanner.scan(Leakproof::Sources.from_repository(dir, mode: :all_objects))
+      end
+
+      expect(result.reject { |f| f.tier == :ignore }).to be_empty
+    end
   end
 
   describe "structural" do
@@ -59,6 +93,16 @@ RSpec.describe "documented gaps" do
   end
 
   describe "verified as not missed" do
+    it "finds an unquoted assignment, which is what a .env file is" do
+      expect(tiers(%(SESSION_SECRET=#{synth.base62(48)}), path: ".env")).to eq([:probable])
+    end
+
+    it "finds a private key escaped into JSON, the shape of a service-account file" do
+      content = JSON.generate(type: "service_account", private_key: synth.rsa_key)
+
+      expect(tiers(content, path: "config/sa.json")).to eq([:confirmed])
+    end
+
     def repo_tiers(mode, &)
       Dir.mktmpdir("leakproof-gap") do |dir|
         repo = RepoBuilder.new(dir)

@@ -37,9 +37,13 @@ runs:
         ruby-version: "3.4"
         bundler-cache: false
 
+    # Installed from source: the gem is not published yet, and an action that
+    # documents a `gem install` for a gem nobody can install is worse than none.
     - name: Install leakproof
       shell: bash
-      run: gem install --no-document leakproof
+      run: |
+        git clone --depth 1 https://github.com/rajeev-chaurasia/leak-proof "$RUNNER_TEMP/leakproof"
+        echo "$RUNNER_TEMP/leakproof/exe" >> "$GITHUB_PATH"
 
     - name: Scan
       id: scan
