@@ -31,10 +31,21 @@ module Leakproof
       end
 
       def parse(value)
-        key = OpenSSL::PKey.read(value)
-        Result.new(:verified, algorithm: key.oid, bits: bit_length(key))
-      rescue OpenSSL::PKey::PKeyError, ArgumentError
+        key = read_key(value)
+        return Result.new(:verified, algorithm: key.oid, bits: bit_length(key)) if key
+
         Result.new(:rejected, reason: "PEM envelope does not contain a parsable key")
+      end
+
+      # A key embedded in JSON or a .env line arrives with its newlines escaped.
+      def read_key(value)
+        candidates = [value, value.gsub("\\n", "\n").gsub("\\r", "\r")]
+        candidates.each do |candidate|
+          return OpenSSL::PKey.read(candidate)
+        rescue OpenSSL::PKey::PKeyError, ArgumentError
+          next
+        end
+        nil
       end
 
       def bit_length(key)

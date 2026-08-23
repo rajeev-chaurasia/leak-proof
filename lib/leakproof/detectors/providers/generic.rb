@@ -10,9 +10,9 @@ Leakproof::Detectors::Registry.register(
     keywords: %w[password passwd secret token api_key apikey api-key auth],
     keywords_ignore_case: true,
     name: "Credential-shaped assignment",
-    pattern: /(?i:password|passwd|secret|token|api[_-]?key|auth[_-]?token)\s*[:=]\s*
-              ["'`]([^"'`\s]{8,120})["'`]/x,
-    capture: 1,
+    pattern: %r{(?i:password|passwd|secret|token|api[_-]?key|auth[_-]?token)\s*[:=]\s*
+              (?:["'`]([^"'`\s]{8,120})["'`]|([A-Za-z0-9+/=_.-]{8,120}))}x,
+    capture: :value,
     specificity: :low,
     entropy_bonus: true,
     notes: "Named by its variable rather than its shape. Noisy by construction.",

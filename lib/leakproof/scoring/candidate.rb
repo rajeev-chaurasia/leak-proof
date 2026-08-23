@@ -23,6 +23,13 @@ module Leakproof
       def column = match.column
       def line_text = match.line_text
       def redacted = match.redacted
+
+      # A PEM block occupies every line of its body, not only the line it starts
+      # on. Without the span, the entropy rule reports each base64 line of a key
+      # the private-key rule has already claimed.
+      def line_span
+        line..(line + value.to_s.count("\n"))
+      end
     end
   end
 end

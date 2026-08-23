@@ -65,7 +65,7 @@ module Leakproof
     # random tail of a prefixed token, which is a different string at a different
     # column. Overlapping spans on one line are one finding.
     def resolve_overlaps(candidates)
-      candidates.group_by { |c| [c.path, c.line] }.values.flat_map { |group| keep_widest(group) }
+      candidates.group_by(&:path).values.flat_map { |group| keep_widest(group) }
     end
 
     def keep_widest(group)
@@ -79,9 +79,14 @@ module Leakproof
     end
 
     def overlaps?(one, other)
-      one_end = one.column + one.value.length
-      other_end = other.column + other.value.length
-      one.column < other_end && other.column < one_end
+      return false unless spans_overlap?(one.line_span, other.line_span)
+      return true if one.line_span.size > 1 || other.line_span.size > 1
+
+      one.column < other.column + other.value.length && other.column < one.column + one.value.length
+    end
+
+    def spans_overlap?(one, other)
+      one.first <= other.last && other.first <= one.last
     end
 
     def annotate_repetition(candidates)

@@ -6,8 +6,8 @@ require_relative "../validity/strategy"
 module Leakproof
   module Detectors
     # A frozen declaration. The registry reads it, the specs read it, and the
-    # README table is generated from it, so behaviour and documentation cannot
-    # drift apart.
+    # docs/detectors.md is generated from it, so behaviour and documentation
+    # cannot drift apart.
     class Detector
       SPECIFICITIES = %i[high medium low].freeze
 
@@ -17,7 +17,7 @@ module Leakproof
       # rubocop:disable Metrics/MethodLength -- the declaration is the interface
       def initialize(id:, name:, pattern:, validity: nil, charset: nil, specificity: :high,
                      secret: true, capture: 0, multiline: false, sample: nil,
-                     entropy_bonus: false, keywords: [], keywords_ignore_case: false,
+                     entropy_bonus: false, advisory: false, keywords: [], keywords_ignore_case: false,
                      examples: {}, notes: nil)
         raise ArgumentError, "unknown specificity: #{specificity}" unless SPECIFICITIES.include?(specificity)
 
@@ -31,6 +31,7 @@ module Leakproof
         @multiline = multiline
         @sample = sample
         @entropy_bonus = entropy_bonus
+        @advisory = advisory
         @keywords = keywords.freeze
         @keyword_matcher = build_keyword_matcher(keywords, keywords_ignore_case)
         @capture = capture
@@ -45,6 +46,12 @@ module Leakproof
       # calling it a leak is how a scanner earns an ignore file.
       def secret?
         @secret
+      end
+
+      # An advisory rule cannot reach a reportable tier on its own evidence. It
+      # exists to be visible with --show ignore during a manual audit.
+      def advisory?
+        @advisory
       end
 
       # True for rules anchored on a variable name rather than a value shape.
@@ -120,9 +127,16 @@ module Leakproof
       end
 
       def build_match(line, number, data)
-        value = @capture.zero? ? data[0] : data[@capture]
-        Match.new(detector: self, value: value, line: number,
-                  column: data.begin(@capture) + 1, line_text: line.chomp)
+        index = capture_index(data)
+        Match.new(detector: self, value: data[index], line: number,
+                  column: data.begin(index) + 1, line_text: line.chomp)
+      end
+
+      # A rule with alternate branches captures into whichever group matched.
+      def capture_index(data)
+        return @capture unless @capture == :value
+
+        (1...data.size).find { |i| data[i] } || 0
       end
     end
   end
