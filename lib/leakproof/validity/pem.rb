@@ -37,15 +37,21 @@ module Leakproof
         Result.new(:rejected, reason: "PEM envelope does not contain a parsable key")
       end
 
-      # A key embedded in JSON or a .env line arrives with its newlines escaped.
+      # A key arrives escaped when it is embedded in JSON or a .env line, and
+      # indented when it sits in a YAML literal block. OpenSSL accepts neither.
       def read_key(value)
-        candidates = [value, value.gsub("\\n", "\n").gsub("\\r", "\r")]
+        unescaped = value.gsub("\\n", "\n").gsub("\\r", "\r")
+        candidates = [value, unescaped].flat_map { |form| [form, dedent(form)] }.uniq
         candidates.each do |candidate|
           return OpenSSL::PKey.read(candidate)
         rescue OpenSSL::PKey::PKeyError, ArgumentError
           next
         end
         nil
+      end
+
+      def dedent(form)
+        form.lines.map(&:lstrip).join
       end
 
       def bit_length(key)
