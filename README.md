@@ -132,11 +132,16 @@ entirely.
 
 ## Try it
 
+Ruby 3.1 or newer, and git. There is nothing to install: the scanner uses only
+the standard library, so a clone runs as it is.
+
 ```bash
 git clone https://github.com/rajeev-chaurasia/leak-proof
-cd leak-proof && bundle install
+cd leak-proof
 ./exe/leakproof scan /path/to/repo
 ```
+
+`bundle install` is only needed to run the test suite.
 
 Include objects no ref points at, which is where an amended-away commit hides:
 
@@ -167,9 +172,11 @@ is a lint rule rather than a convention, checked by `script/check_layering.rb`,
 and the payoff is that the whole engine is testable with no repository on disk.
 
 Adding a provider means adding one file to
-`lib/leakproof/detectors/providers/`. The registry finds it. A test asserts
-that claim by registering a rule at run time and checking it reaches scanning,
-validation and the generated documentation without a single edit to the core.
+`lib/leakproof/detectors/providers/`. The registry finds it, and a test asserts
+that by registering a rule at run time and checking it reaches scanning and
+validation with no edit to the core. One tracked file does change:
+`docs/detectors.md` is generated from the registry, and CI fails if it has not
+been regenerated.
 
 Blobs are enumerated twice, by git plumbing and by libgit2, and a differential
 test asserts the two independent readings agree byte for byte. That is the
@@ -177,8 +184,11 @@ Liskov substitution principle made empirical instead of aspirational.
 
 No detector contains a credential. Each declares a *shape*, and samples are
 built at run time, which is why this repository can be pushed to GitHub at all.
-`script/check_no_samples.rb` runs leakproof over its own tracked tree on every
-commit to keep it that way.
+`script/check_no_samples.rb` keeps it that way by running leakproof over the
+working tree and the whole object store, so a sample is caught before it is
+committed and cannot hide in a blob that a later commit deleted. Seven values
+from before that rule existed are listed there by content fingerprint, with what
+each one is.
 
 Runtime dependencies: none. `rugged` is optional and only the differential test
 uses it.
