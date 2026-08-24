@@ -132,8 +132,9 @@ entirely.
 
 ## Try it
 
-Ruby 3.1 or newer, and git. There is nothing to install: the scanner uses only
-the standard library, so a clone runs as it is.
+Ruby 3.3 or newer, and git. CI runs the suite on 3.3 and 3.4, on Linux and
+macOS. There is nothing to install: the scanner uses only the standard library,
+so a clone runs as it is.
 
 ```bash
 git clone https://github.com/rajeev-chaurasia/leak-proof
