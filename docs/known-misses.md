@@ -20,8 +20,18 @@ can be checked without asking the provider.
 ## Limits of the entropy rule
 
 The unclassified-high-entropy rule exists to catch credentials from providers
-there is no rule for. It is the weakest rule here and it is bounded on five
+there is no rule for. It is the weakest rule here and it is bounded on six
 sides. Each bound was chosen against a measurement, and each costs recall.
+
+It is also **advisory**: it carries no entropy bonus, so on its own evidence it
+scores below the probable tier and is only visible with `--show ignore`. It
+surfaces as a finding when something else corroborates it, in practice a
+credential-shaped variable name. This is deliberate. The low base score and the
+entropy bonus previously summed to exactly the probable threshold, which meant
+every base64 blob in a repository, every embedded font, every subresource
+integrity hash and every certificate body arrived as a finding with nothing
+supporting it. That single coincidence accounted for the large majority of the
+false positives measured in the ten-repository sweep.
 
 | bound | value | why | what it misses |
 |---|---|---|---|
