@@ -20,10 +20,6 @@ module Leakproof
         end
         digits.rjust(width, ALPHABET[0])
       end
-
-      def valid?(value)
-        !value.empty? && value.each_char.all? { |c| ALPHABET.include?(c) }
-      end
     end
   end
 end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "zlib"
+require_relative "../detectors/entropy/charsets"
 require_relative "base62"
 require_relative "strategy"
 
@@ -29,7 +30,8 @@ module Leakproof
 
         entropy = remainder[0...-CHECKSUM_LENGTH]
         actual = remainder[-CHECKSUM_LENGTH..]
-        return Result.new(:malformed, reason: "non-base62 body") unless Base62.valid?(remainder)
+        return Result.new(:malformed, reason: "non-base62 body") unless
+          Detectors::Entropy::Charsets.matches?(:base62, remainder)
 
         compare(prefix, entropy, actual)
       end

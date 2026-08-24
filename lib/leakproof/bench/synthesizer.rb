@@ -3,6 +3,7 @@
 require "openssl"
 require "json"
 require "zlib"
+require_relative "../detectors/entropy/charsets"
 require_relative "../validity/base62"
 require_relative "../validity/base64url"
 
@@ -16,11 +17,14 @@ module Leakproof
     # GitHub's own push protection will refuse it. Detectors declare the shape,
     # this builds the material, and the material never touches disk.
     class Synthesizer
-      BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-      BASE32 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
+      BASE62 = Detectors::Entropy::Charsets::BASE62
+      BASE32 = Detectors::Entropy::Charsets::BASE32
+      BASE64URL = Detectors::Entropy::Charsets::BASE64URL
+
+      # Deliberately not Charsets::HEX. That one is a membership set and carries
+      # both cases, so drawing from it would make a-f twice as likely as 0-9.
       HEX = "0123456789abcdef"
       DIGITS = "0123456789"
-      BASE64URL = "#{BASE62}-_".freeze
 
       def initialize(seed: 20_260_823)
         @random = Random.new(seed)

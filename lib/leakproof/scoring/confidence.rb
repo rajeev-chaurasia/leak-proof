@@ -49,9 +49,16 @@ module Leakproof
       def entropy_bonus(candidate)
         return 0 unless candidate.detector.entropy_bonus?
         return 0 if candidate.value.length < ENTROPY_BONUS_MIN_LENGTH
-        return 0 if Detectors::Entropy::Shannon.normalized(candidate.value) < ENTROPY_BONUS_AT
+        return 0 if normalized_entropy(candidate) < ENTROPY_BONUS_AT
 
         ENTROPY_BONUS
+      end
+
+      # Uses the alphabet the rule declared rather than re-inferring one from the
+      # sample. Inference reads a base32 body that happens to contain no letters
+      # past F as hex, and scores it against the wrong ceiling.
+      def normalized_entropy(candidate)
+        Detectors::Entropy::Shannon.normalized(candidate.value, charset: candidate.detector.charset)
       end
 
       # A checksum or a key parse is evidence, not a hint. Heuristics may take a

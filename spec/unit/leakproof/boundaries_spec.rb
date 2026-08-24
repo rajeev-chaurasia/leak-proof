@@ -111,6 +111,30 @@ RSpec.describe Leakproof::Scoring::Confidence do # rubocop:disable RSpec/SpecFil
     end
   end
 
+  # The alphabet a rule declares was read by nothing for most of this project's
+  # life, so it could be wrong on ten providers without anything noticing.
+  describe "a rule's declared charset" do
+    let(:hex_only) { "abcdef0123456789abcdef0123456789" }
+
+    it "changes the entropy ceiling, so it cannot be decorative" do
+      inferred = Leakproof::Detectors::Entropy::Shannon.normalized(hex_only)
+      declared = Leakproof::Detectors::Entropy::Shannon.normalized(hex_only, charset: :base64)
+
+      expect(inferred).to be > declared
+    end
+
+    it "is what the scorer uses, rather than re-inferring one from the sample" do
+      rule = detector("aws-secret-access-key")
+      candidate = candidate_for(rule, :well_formed, hex_only)
+
+      expect(rule.charset).to eq(:base64)
+      expect(Leakproof::Scoring::Confidence.call(candidate, []).score).to eq(
+        Leakproof::Scoring::Confidence::BASE[rule.specificity] +
+        Leakproof::Scoring::Confidence::VALIDITY[:well_formed]
+      )
+    end
+  end
+
   # Tier assertions alone cannot see a changed weight, because a score can move
   # a long way inside one tier. These pin the arithmetic itself.
   describe "the scoring weights" do

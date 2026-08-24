@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "../detectors/entropy/charsets"
 require_relative "strategy"
 
 module Leakproof
@@ -23,7 +24,8 @@ module Leakproof
         prefix = value[0, 4]
         body = value[4..]
         return Result.new(:malformed, reason: "unknown prefix") unless PREFIXES.include?(prefix)
-        return Result.new(:malformed, reason: "non-base32 body") unless base32?(body)
+        return Result.new(:malformed, reason: "non-base32 body") unless
+          Detectors::Entropy::Charsets.matches?(:base32, body)
 
         Result.new(:well_formed, prefix: prefix, account_id: account_id(body))
       end
@@ -35,10 +37,6 @@ module Leakproof
       end
 
       private
-
-      def base32?(value)
-        value.each_char.all? { |c| ALPHABET.include?(c) }
-      end
 
       def decode(body)
         bits = body.each_char.map { |c| ALPHABET.index(c).to_s(2).rjust(5, "0") }.join
