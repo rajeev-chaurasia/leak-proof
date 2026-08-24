@@ -13,7 +13,10 @@ class RepoBuilder
   ENVIRONMENT = {
     "GIT_AUTHOR_NAME" => "Test", "GIT_AUTHOR_EMAIL" => "test@example.com",
     "GIT_COMMITTER_NAME" => "Test", "GIT_COMMITTER_EMAIL" => "test@example.com",
-    "GIT_CONFIG_GLOBAL" => "/dev/null", "GIT_CONFIG_SYSTEM" => "/dev/null"
+    "GIT_CONFIG_GLOBAL" => "/dev/null", "GIT_CONFIG_SYSTEM" => "/dev/null",
+    # Background maintenance writes objects/maintenance.lock while a spec is
+    # tearing its repository down, which made teardown fail intermittently.
+    "GIT_OPTIONAL_LOCKS" => "0"
   }.freeze
 
   def self.build(&block)
@@ -62,8 +65,10 @@ class RepoBuilder
     git("rev-parse", "HEAD").strip
   end
 
+  # rm_rf rather than remove_entry: the latter raises if a file vanishes between
+  # the walk and the unlink, which is exactly what a concurrent git process does.
   def destroy
-    FileUtils.remove_entry(path) if File.directory?(path)
+    FileUtils.rm_rf(path, secure: false)
   end
 
   def git(*args)
