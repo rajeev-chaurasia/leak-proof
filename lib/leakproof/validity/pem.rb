@@ -17,14 +17,48 @@ module Leakproof
       def check(value)
         return Result.new(:malformed, reason: "no PEM envelope") unless value.include?("-----BEGIN")
 
-        # An encrypted key is still a real key. Refusing to guess the passphrase
-        # is not the same as failing to recognise one.
-        return Result.new(:verified, encrypted: true) if encrypted?(value)
+        return encrypted_result(value) if encrypted?(value)
 
         parse(value)
       end
 
       private
+
+      # An encrypted key is still a real key, but the header alone proves nothing:
+      # this returned :verified for any string carrying the marker, so a
+      # four-character stub in a test file reached the confirmed tier. The
+      # passphrase is unknowable here, the DER structure underneath is not.
+      def encrypted_result(value)
+        return Result.new(:verified, encrypted: :pkcs8) if der_structure?(value)
+        return Result.new(:verified, encrypted: :traditional) if traditional_headers?(value)
+
+        Result.new(:malformed, reason: "encrypted PEM envelope with no parsable structure")
+      end
+
+      # A traditional encrypted PEM body is raw ciphertext rather than DER, so
+      # there is nothing to parse. Its two headers plus a body of real size are
+      # what distinguishes it from a stub.
+      def traditional_headers?(value)
+        return false unless value.include?("Proc-Type: 4,ENCRYPTED") && value.include?("DEK-Info:")
+
+        body_bytes(value).to_s.bytesize >= 48
+      end
+
+      def der_structure?(value)
+        decoded = body_bytes(value)
+        return false if decoded.nil? || decoded.bytesize < 48
+
+        OpenSSL::ASN1.decode(decoded).is_a?(OpenSSL::ASN1::Sequence)
+      rescue ArgumentError, OpenSSL::ASN1::ASN1Error
+        false
+      end
+
+      def body_bytes(value)
+        body = value.lines.reject { |line| line.start_with?("-----", "Proc-Type", "DEK-Info") }.join
+        body.unpack1("m")
+      rescue ArgumentError
+        nil
+      end
 
       def encrypted?(value)
         ENCRYPTED_MARKERS.any? { |marker| value.include?(marker) }
