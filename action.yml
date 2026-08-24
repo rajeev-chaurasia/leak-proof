@@ -38,7 +38,7 @@ runs:
         bundler-cache: false
 
     # Installed from source: the gem is not published yet, and an action that
-    # documents a `gem install` for a gem nobody can install is worse than none.
+    # is installed from this checkout, because nothing here is published.
     - name: Install leakproof
       shell: bash
       run: |

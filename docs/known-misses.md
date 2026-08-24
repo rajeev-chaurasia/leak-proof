@@ -3,7 +3,7 @@
 Every entry here was verified by running the scanner, and every one is asserted
 in `spec/adversarial/known_misses_spec.rb`. If a miss is fixed, that spec fails
 and this page has to change with it. If a new one is found, it belongs here
-before the release that contains it.
+before the change that closes it lands.
 
 ## By design
 

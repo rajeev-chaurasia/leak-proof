@@ -4,7 +4,7 @@ about: The most valuable report this project can receive
 labels: missed-secret
 ---
 
-A confirmed miss blocks the next release until it is fixed, and the fix ships
+A confirmed miss blocks the build until it is fixed, and the fix lands
 with the reproduction committed as a test.
 
 **Do not paste a real credential.** Describe its shape, or generate a

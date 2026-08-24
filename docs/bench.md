@@ -57,7 +57,7 @@ behaviour look like failure:
 The same corpus is scanned twice, once with the context filter and once
 without, which is where the false-positive reduction table comes from.
 
-## The release gate
+## The gate
 
 `spec/bench/release_gate_spec.rb` runs the whole thing in the test suite.
 Precision must be exactly 1.0 and no false positive may survive the filter.

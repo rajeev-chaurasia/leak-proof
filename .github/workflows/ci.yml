@@ -50,7 +50,7 @@ jobs:
         with:
           ruby-version: "3.4"
           bundler-cache: true
-      # The release gate: no false positive survives the filter, and precision
+      # The gate: no false positive survives the filter, and precision
       # at the confirmed tier is exactly one.
       - run: ./exe/leakproof-bench
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

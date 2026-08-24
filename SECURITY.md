@@ -6,7 +6,7 @@ This is a scanner, so the interesting failures are its own.
 
 **A missed credential** is the most valuable report this project can receive.
 Open an issue with the [missed-secret template](.github/ISSUE_TEMPLATE/missed-secret.md).
-A confirmed miss blocks the next release until it is fixed, and the fix ships
+A confirmed miss blocks the build until it is fixed, and the fix lands
 with the reproduction committed as a test. Please do not paste a real
 credential: describe the shape, or generate a structurally valid one with
 `Leakproof::Bench::Synthesizer`.
