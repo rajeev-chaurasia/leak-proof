@@ -7,7 +7,7 @@
 # bounds moved by one, and the PAT length anchor widened from 36 to a range,
 # with the suite staying green throughout. Samples far from a boundary do not
 # pin the boundary.
-RSpec.describe "published constants" do
+RSpec.describe Leakproof::Scoring::Confidence do # rubocop:disable RSpec/SpecFilePathFormat
   let(:synth) { Leakproof::Bench::Synthesizer.new(seed: 41) }
   let(:scanner) { Leakproof::Scanner.new }
 
@@ -38,23 +38,24 @@ RSpec.describe "published constants" do
   describe "the entropy threshold of 0.92" do
     subject(:rule) { detector("high-entropy-string") }
 
+    let(:dull_value) { "qbuu7bzkXn1LrtAhyaZRGGWGoIqqqqqq" }
+
     # Deliberately just under the threshold, and carrying three character
     # classes so every other bound is satisfied and the threshold is the only
     # thing rejecting it. A duller value would be turned away on charset instead
     # and would pin nothing.
-    DULL = "qbuu7bzkXn1LrtAhyaZRGGWGoIqqqqqq"
 
     it "ignores a value whose normalized entropy sits just below the threshold" do
-      score = Leakproof::Detectors::Entropy::Shannon.normalized(DULL)
+      score = Leakproof::Detectors::Entropy::Shannon.normalized(dull_value)
 
       expect(score).to be_between(0.50, 0.92)
-      expect(rule.scan(%(x = "#{DULL}")).to_a).to be_empty
+      expect(rule.scan(%(x = "#{dull_value}")).to_a).to be_empty
     end
 
     it "reports that same value once the threshold is relaxed" do
       relaxed = Leakproof::Detectors::Entropy::EntropyDetector.new(threshold: 0.50)
 
-      expect(relaxed.scan(%(x = "#{DULL}")).to_a).not_to be_empty
+      expect(relaxed.scan(%(x = "#{dull_value}")).to_a).not_to be_empty
     end
 
     it "matches a drawn value, which sits above the threshold" do
@@ -135,7 +136,7 @@ RSpec.describe "published constants" do
     it "is unreachable for any rule without a proof, across the whole registry" do
       Leakproof::Detectors::Registry.default.each do |rule|
         %i[unknown well_formed malformed].each do |status|
-          verdict = Leakproof::Scoring::Confidence.call(
+          verdict = described_class.call(
             candidate_for(rule, status, synth.base62(40)), []
           )
 
