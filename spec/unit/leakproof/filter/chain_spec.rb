@@ -21,7 +21,7 @@ RSpec.describe Leakproof::Filter::Chain do
 
   it "runs every suppressor it was given" do
     expect(chain.rules).to contain_exactly(
-      "placeholders", "identifier-shape", "documented-dummy", "ciphertext-by-design",
+      "placeholders", "identifier-shape", "documented-dummy",
       "path-rules", "minified", "repetition"
     )
   end

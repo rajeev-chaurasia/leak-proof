@@ -6,7 +6,7 @@ LINK = /\[[^\]]*\]\(([^)#][^)]*)\)/
 failures = []
 
 `git ls-files "*.md"`.each_line(chomp: true).each do |file|
-  File.readlines(file).each_with_index do |line, index|
+  File.readlines(file, encoding: "UTF-8").each_with_index do |line, index|
     line.scan(LINK).flatten.each do |target|
       next if target.start_with?("http://", "https://", "mailto:")
 

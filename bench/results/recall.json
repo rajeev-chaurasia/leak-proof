@@ -2,133 +2,241 @@
   "schema": "leakproof/bench-result-v1",
   "version": "0.1.0",
   "seed": 20260823,
-  "planted": 22,
-  "decoys": 11,
+  "planted": 295,
+  "decoys": 30,
   "filtered": {
-    "must_find": 9,
-    "true_positives": 9,
+    "must_find": 145,
+    "true_positives": 145,
     "false_negatives": 0,
     "false_positives": 0,
     "precision": 1.0,
     "recall": 1.0,
-    "confirmed": 3,
-    "reported": 14,
-    "demoted": "10/10",
-    "public_types_ignored": "3/3",
+    "confirmed": 57,
+    "reported": 187,
+    "demoted": "108/108",
+    "public_types_ignored": "42/42",
     "missed": [],
     "spurious": [],
     "by_rule": {
+      "aws-access-key-id": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
       "aws-secret-access-key": {
-        "planted": 1,
-        "found": 1,
-        "recall": 1.0
-      },
-      "github-server-to-server": {
-        "planted": 1,
-        "found": 1,
-        "recall": 1.0
-      },
-      "github-fine-grained-pat": {
-        "planted": 1,
-        "found": 1,
-        "recall": 1.0
-      },
-      "json-web-token": {
-        "planted": 1,
-        "found": 1,
-        "recall": 1.0
-      },
-      "openai-api-key": {
-        "planted": 1,
-        "found": 1,
-        "recall": 1.0
-      },
-      "private-key": {
-        "planted": 1,
-        "found": 1,
-        "recall": 1.0
-      },
-      "sendgrid-api-key": {
-        "planted": 1,
-        "found": 1,
-        "recall": 1.0
-      },
-      "slack-token": {
-        "planted": 1,
-        "found": 1,
+        "planted": 8,
+        "found": 8,
         "recall": 1.0
       },
       "github-pat": {
-        "planted": 1,
-        "found": 1,
+        "planted": 9,
+        "found": 9,
+        "recall": 1.0
+      },
+      "github-oauth-token": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "github-user-to-server": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "github-server-to-server": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "github-refresh-token": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "github-fine-grained-pat": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "google-api-key": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "json-web-token": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "npm-access-token": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "openai-api-key": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "private-key": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "sendgrid-api-key": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "slack-token": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "slack-webhook-url": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "stripe-secret-key": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "twilio-api-key": {
+        "planted": 8,
+        "found": 8,
         "recall": 1.0
       }
     }
   },
   "unfiltered": {
-    "must_find": 9,
-    "true_positives": 9,
+    "must_find": 145,
+    "true_positives": 145,
     "false_negatives": 0,
-    "false_positives": 1,
-    "precision": 0.9,
+    "false_positives": 4,
+    "precision": 0.9732,
     "recall": 1.0,
-    "confirmed": 8,
-    "reported": 20,
-    "demoted": "5/10",
-    "public_types_ignored": "3/3",
+    "confirmed": 99,
+    "reported": 257,
+    "demoted": "66/108",
+    "public_types_ignored": "42/42",
     "missed": [],
     "spurious": [
       {
+        "rule": "openai-api-key",
+        "path": "ml/train.py",
+        "line": 1,
+        "tier": "probable"
+      },
+      {
+        "rule": "openai-api-key",
+        "path": "web/src/spinner.scss",
+        "line": 1,
+        "tier": "probable"
+      },
+      {
         "rule": "aws-access-key-id",
         "path": "app/models/user.rb",
-        "line": 11,
+        "line": 13,
+        "tier": "probable"
+      },
+      {
+        "rule": "generic-assignment",
+        "path": "app/models/user.rb",
+        "line": 4,
         "tier": "probable"
       }
     ],
     "by_rule": {
+      "aws-access-key-id": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
       "aws-secret-access-key": {
-        "planted": 1,
-        "found": 1,
-        "recall": 1.0
-      },
-      "github-server-to-server": {
-        "planted": 1,
-        "found": 1,
-        "recall": 1.0
-      },
-      "github-fine-grained-pat": {
-        "planted": 1,
-        "found": 1,
-        "recall": 1.0
-      },
-      "json-web-token": {
-        "planted": 1,
-        "found": 1,
-        "recall": 1.0
-      },
-      "openai-api-key": {
-        "planted": 1,
-        "found": 1,
-        "recall": 1.0
-      },
-      "private-key": {
-        "planted": 1,
-        "found": 1,
-        "recall": 1.0
-      },
-      "sendgrid-api-key": {
-        "planted": 1,
-        "found": 1,
-        "recall": 1.0
-      },
-      "slack-token": {
-        "planted": 1,
-        "found": 1,
+        "planted": 8,
+        "found": 8,
         "recall": 1.0
       },
       "github-pat": {
-        "planted": 1,
-        "found": 1,
+        "planted": 9,
+        "found": 9,
+        "recall": 1.0
+      },
+      "github-oauth-token": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "github-user-to-server": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "github-server-to-server": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "github-refresh-token": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "github-fine-grained-pat": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "google-api-key": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "json-web-token": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "npm-access-token": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "openai-api-key": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "private-key": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "sendgrid-api-key": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "slack-token": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "slack-webhook-url": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "stripe-secret-key": {
+        "planted": 8,
+        "found": 8,
+        "recall": 1.0
+      },
+      "twilio-api-key": {
+        "planted": 8,
+        "found": 8,
         "recall": 1.0
       }
     }

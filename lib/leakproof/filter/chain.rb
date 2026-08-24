@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "ciphertext_by_design"
 require_relative "documented_dummy"
 require_relative "identifier_shape"
 require_relative "minified"
@@ -11,7 +10,7 @@ require_relative "repetition"
 module Leakproof
   module Filter
     class Chain
-      DEFAULT = [Placeholders, IdentifierShape, DocumentedDummy, CiphertextByDesign,
+      DEFAULT = [Placeholders, IdentifierShape, DocumentedDummy,
                  PathRules, Minified, Repetition].freeze
 
       def self.default

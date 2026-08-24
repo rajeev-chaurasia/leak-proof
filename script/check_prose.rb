@@ -19,7 +19,7 @@ failures = []
   next unless File.file?(file)
   next if File.binread(file, 8000).to_s.include?("\x00")
 
-  File.readlines(file).each_with_index do |line, index|
+  File.readlines(file, encoding: "UTF-8").each_with_index do |line, index|
     BANNED.each do |label, pattern|
       failures << "#{file}:#{index + 1}: #{label}: #{line.strip}" if line.match?(pattern)
     end
