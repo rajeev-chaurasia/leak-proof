@@ -128,7 +128,7 @@ RSpec.describe Leakproof::Scoring::Confidence do # rubocop:disable RSpec/SpecFil
       candidate = candidate_for(rule, :well_formed, hex_only)
 
       expect(rule.charset).to eq(:base64)
-      expect(Leakproof::Scoring::Confidence.call(candidate, []).score).to eq(
+      expect(described_class.call(candidate, []).score).to eq(
         Leakproof::Scoring::Confidence::BASE[rule.specificity] +
         Leakproof::Scoring::Confidence::VALIDITY[:well_formed]
       )
