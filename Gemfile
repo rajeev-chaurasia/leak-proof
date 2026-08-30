@@ -10,7 +10,7 @@ group :development, :test do
   gem "rspec", "~> 3.13"
   gem "rubocop", "~> 1.66"
   gem "rubocop-rspec", "~> 3.1"
-  gem "simplecov", "~> 0.22"
+  gem "simplecov", "~> 1.1"
 end
 
 # Optional accelerated git backend. Absent by default so the pre-commit hook
